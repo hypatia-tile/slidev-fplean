@@ -1,0 +1,12 @@
+name = "fplean43"
+defaultTargets = ["Arith", "Slides", "dump-trace"]
+
+[[lean_lib]]
+name = "Arith"
+
+[[lean_lib]]
+name = "Slides"
+
+[[lean_exe]]
+name = "dump-trace"
+root = "DumpTrace"
