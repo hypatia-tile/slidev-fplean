@@ -14,7 +14,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 // Slidev loads this stylesheet only when slides.md itself contains math; frame texts
 // rendered by the import script need it regardless.
 import 'katex/dist/katex.min.css'
-import regions from '../generated/regions.json'
+import { regions } from './deckData'
 
 export type Region = {
   name: string
@@ -30,11 +30,11 @@ export type Region = {
 }
 
 export function useLeanFrame(name: string, offset: () => number) {
-  const frames = (regions as Region[])
+  const frames = (regions() as Region[])
     .filter(r => r.name === name)
     .sort((a, b) => a.frame - b.frame)
   if (!frames.length)
-    throw new Error(`[lean] no region "${name}" in generated/regions.json — run \`pnpm lean:import\``)
+    throw new Error(`[lean] no region "${name}" in this deck's generated/regions.json — run \`pnpm lean:import\``)
 
   const lens = frames.map(f => f.range ? f.range.slice(1, -1).split('|').length : 1)
   const starts = lens.map((_, i) => lens.slice(0, i).reduce((a, b) => a + b, 0))

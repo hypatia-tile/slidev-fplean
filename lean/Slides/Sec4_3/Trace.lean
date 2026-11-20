@@ -1,4 +1,5 @@
-import Arith
+import Book.Sec4_3.Many
+import Book.Sec4_3.Reader
 import Lean.Data.Json
 
 /-!

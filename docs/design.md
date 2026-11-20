@@ -1,5 +1,13 @@
 # Design decisions
 
+Sections 1–18 come from the `fplean-4-3-slidev` prototype (one deck, FPIL 4.3), copied here
+unchanged as the record of why the tooling looks the way it does. Their paths are the
+prototype's (`lean/Arith/`, `slides/slides.md`, …); §19 maps them to this repository and
+records the decisions for covering the whole book. Where §19 changes an earlier decision,
+§19 wins.
+
+## Prototype
+
 This repository is a **prototype**. Its purpose is to find out, by building a small
 deck that actually works, what a "write Lean, present it in Slidev" workflow needs.
 Each decision below records what was chosen, what else was considered, and why.
@@ -305,11 +313,76 @@ included).
 **Kept out of prose.** Results of the book's search and reader examples appear only as
 checked `#eval` output; the rules slide states the rules, not the results.
 
+## 19. From the prototype to the whole book
+
+Settled with the owner before the move (2026-11-20).
+
+**Purpose and unit.** The decks are for **talks in a study group**: built for a live presenter
+(clicks, Magic Move, traces, speaker notes), and still readable alone afterwards thanks to the
+intent/takeaway layers (§16). **One deck per book section** (about 30–45 minutes, like 4.3).
+Very short sections may be merged later, as an exception.
+
+**One repository, one site.** One Lake project and one Slidev project serve every deck; one
+Vercel site serves each deck at `/<c>-<s>/` (section number, e.g. `/4-3/`) plus an index page.
+**Not chosen:** one Vercel project per deck, one repository per deck (§3's reason, "quick to
+change both sides at once", now applies to the shared tooling).
+
+**Copy, then generalise.** The prototype's tooling was copied (provenance in the first
+commit) and reworked; 4.3 moved first, and its regenerated output was compared with the
+prototype's: identical except paths and one line number.
+
+**One pinned book release.** `book.json` names a release tag of `leanprover/fp-lean`
+(`release-2026-11`) and its commit. `lean/lean-toolchain` is that release's
+`examples/lean-toolchain`; the import script checks this. The credit and "as in the book"
+both refer to that release. Moving to a newer release is one deliberate change for all decks:
+update `book.json` and the toolchain, re-import, and every `#guard_msgs` shows where behaviour
+changed. Renumbered sections then get redirects from their old URLs. **Not chosen:** a
+release per deck (several Lean versions, so no shared Lake project); following the latest
+book with no record (claims would not be checkable against a fixed text).
+
+**Order.** Decks are made in the order the study group reads, by default book order;
+`docs/roadmap.md` will list every section.
+
+**Exercises.** Listed on a final slide, without solutions (§18 left them out; the book gives
+no solutions to check, and solving them is the reader's job).
+
+**Deploy.** Vercel's Git integration (production from `main`, previews for pull requests)
+builds only Slidev, from the committed `generated/` (§8), so Vercel needs no Lean.
+A GitHub Actions job runs `lake build` and checks that `generated/` is what the import would
+write. That replaces §14's "no CI".
+
+**Licensing.** The book is CC BY 4.0 (© 2023 Microsoft Corporation; changes © 2023–2025
+Lean FRO, LLC). Book code and decks are CC BY 4.0; the rest is MIT. `NOTICE` has the details;
+each deck credits the book on its title and last slides.
+
+### Layout choices made in the move
+
+- **Per-section directories, not namespaces.** Book code of c.s is in
+  `lean/Book/Sec<c>_<s>/`, helpers in `lean/Slides/Sec<c>_<s>/`. Wrapping each section in a
+  namespace was not chosen: it would change how the book's code resolves names (e.g. a
+  `def List.foo` would become `Sec4_3.List.foo`). Instead, no module imports two sections
+  that define the same name, and the libraries use `globs` instead of a root module that
+  imports everything.
+- **One trace executable per deck** (`trace-<c>-<s>`), for the same reason: a single
+  executable would import every deck's trace code. A deck without traces has none, and gets
+  an empty `trace.json`.
+- **Deck files at the top of `slides/`** (`slides/4-3.md`), not in a subdirectory: Slidev
+  looks for `components/`, `style.css` etc. next to the entry file, so this is what lets every
+  deck share them.
+- **The deck names itself in its headmatter** (`deck: 4-3`). Slidev passes every headmatter key
+  to the client as `configs`, and `utils/deckData.ts` uses it to pick
+  `generated/<deck>/` out of an `import.meta.glob` of all decks' data. The import script
+  checks the key against the file name. This bundles every deck's (small) JSON into each
+  deck's build; acceptable while each is a few kB.
+- **Region names are per deck**, so later decks need not avoid names used by earlier ones.
+- **The import checks all decks before writing any** (§8 extended), then swaps each deck in
+  on its own; each deck's pair (`generated/<id>/`, `<id>.md`) stays consistent.
+
 ## Open questions
 
 - Is it worth moving to a Lean metaprogram for extraction (hover types, hole messages)?
 - Should the trace *steps* get a correctness statement instead of pinned examples?
-- Should `slides/generated/` stay committed once a CI exists?
+- Should `slides/generated/` stay committed once a CI exists? (§19: yes, so Vercel needs no Lean.)
 - Can `LeanCaption` drop the `offset` assumption, e.g. by wrapping Magic Move in a
   component that publishes its own click range?
 - Does the book's own line breaking matter? The code was copied from a page whose line

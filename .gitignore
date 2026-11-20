@@ -5,4 +5,4 @@ slides/dist/
 slides/.slidev/
 slides/generated.next/
 slides/generated.old/
-slides/slides.md.next
+slides/*.md.next

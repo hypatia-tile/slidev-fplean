@@ -1,5 +1,5 @@
 {
-  description = "FPIL 4.3 (Arithmetic in Monads) as a Slidev deck backed by checked Lean code";
+  description = "Functional Programming in Lean as Slidev decks backed by checked Lean code";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 

@@ -1,6 +1,6 @@
 {"version": "1.2.0",
  "packagesDir": ".lake/packages",
  "packages": [],
- "name": "fplean43",
+ "name": "fplean",
  "lakeDir": ".lake",
  "fixedToolchain": false}

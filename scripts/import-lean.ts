@@ -1,14 +1,19 @@
-// Import checked Lean code into the Slidev deck.
+// Import checked Lean code into the Slidev decks.
+//
+//   pnpm lean:import            every deck (slides/<c>-<s>.md)
+//   pnpm lean:import 4-3 …      only these decks
 //
 //   1. `lake build`            — type-checks everything; every #guard / #guard_msgs must pass.
-//   2. Read regions from lean/**/*.lean and write
-//        slides/generated/snippets/<name>@<n>.lean   (code shown on slides)
-//        slides/generated/regions.json               (steps, notes, source locations)
-//        slides/generated/evals.json                 (#eval + expected output from #guard_msgs)
-//   3. `lake exe dump-trace`   → slides/generated/trace.json
-//   4. Refill the generated blocks in slides/slides.md (see CLAUDE.md for the syntax).
+//   2. Per deck <id> = <c>-<s>: read regions from lean/Book/Sec<c>_<s>/ and
+//      lean/Slides/Sec<c>_<s>/, and write
+//        slides/generated/<id>/snippets/<name>@<n>.lean   (code shown on slides)
+//        slides/generated/<id>/regions.json               (steps, notes, source locations)
+//        slides/generated/<id>/evals.json                 (#eval + expected output from #guard_msgs)
+//   3. `lake exe trace-<id>`   → slides/generated/<id>/trace.json, if the deck has
+//      lean/Slides/Sec<c>_<s>/DumpTrace.lean; otherwise an empty list.
+//   4. Refill the generated blocks in slides/<id>.md (see CLAUDE.md for the syntax).
 //
-// Any problem stops the script with a non-zero exit before slides.md is touched.
+// Any problem stops the script with a non-zero exit before any deck is touched.
 
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -19,8 +24,8 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const leanDir = path.join(root, "lean");
 const slidesDir = path.join(root, "slides");
-const genDir = path.join(slidesDir, "generated");
-const slidesMd = path.join(slidesDir, "slides.md");
+const genRoot = path.join(slidesDir, "generated");
+const RE_DECK_FILE = /^(\d+)-(\d+)\.md$/;
 
 // KaTeX is a dependency of the Slidev project, so resolve it from there.
 const katex = createRequire(path.join(slidesDir, "package.json"))("katex");
@@ -327,11 +332,11 @@ const RE_NOTES = /<!--\nlean:notes ([\w-]+)\n[\s\S]*?-->/g;
  * next one opens, and every `lean:` marker must be well formed. Otherwise the non-greedy
  * block regex could pair an opener with a later block's closer and silently drop content.
  */
-function checkBlockMarkers(md: string) {
+function checkBlockMarkers(md: string, file: string) {
   let open: { name: string; line: number } | null = null;
   md.split("\n").forEach((raw, i) => {
     const line = raw.trim();
-    const at = `slides.md:${i + 1}`;
+    const at = `${file}:${i + 1}`;
     const opener = line.match(/^<!-- lean:(code|eval) ([\w-]+) -->$/);
     if (opener) {
       if (open) fail(`${at}: "${line}" opens before "${open.name}" (line ${open.line}) is closed with <!-- /lean -->`);
@@ -350,21 +355,22 @@ function checkBlockMarkers(md: string) {
     }
     if (/<!--\s*\/?\s*lean\b/.test(line)) fail(`${at}: malformed lean marker: ${line}`);
   });
-  if (open) fail(`slides.md:${(open as { line: number }).line}: "${(open as { name: string }).name}" is never closed with <!-- /lean -->`);
+  if (open) fail(`${file}:${(open as { line: number }).line}: "${(open as { name: string }).name}" is never closed with <!-- /lean -->`);
 }
 
-function renderBlocks(md: string, byName: Map<string, Region[]>, evals: Eval[]): string {
-  checkBlockMarkers(md);
-  const need =(name: string, at: string) => byName.get(name) ?? fail(`slides.md: ${at} refers to unknown region "${name}"`);
+function renderBlocks(md: string, file: string, deck: string, byName: Map<string, Region[]>, evals: Eval[]): string {
+  checkBlockMarkers(md, file);
+  const need = (name: string, at: string) =>
+    byName.get(name) ?? fail(`${file}: ${at} refers to unknown region "${name}" (regions of deck ${deck}: ${[...byName.keys()].join(", ") || "none"})`);
   md = md.replace(RE_BLOCK, (_all, kind: string, name: string) => {
     const frames = need(name, `lean:${kind}`);
     let body: string;
     if (kind === "code") {
-      const imports = frames.map((f) => `<<< @/generated/snippets/${name}@${f.frame}.lean ${rangeOf(f.steps)}`.trimEnd());
+      const imports = frames.map((f) => `<<< @/generated/${deck}/snippets/${name}@${f.frame}.lean ${rangeOf(f.steps)}`.trimEnd());
       body = frames.length === 1 ? imports[0] : ["````md magic-move", ...imports, "````"].join("\n");
     } else {
       const es = evals.filter((e) => e.region.startsWith(`${name}@`));
-      if (!es.length) fail(`slides.md: lean:eval ${name} — region has no #guard_msgs-checked #eval`);
+      if (!es.length) fail(`${file}: lean:eval ${name} — region has no #guard_msgs-checked #eval`);
       body = es
         .map((e) => ["```lean", e.command, "```", '<div class="lean-output">', "", "```text", e.output, "```", "", "</div>"].join("\n"))
         .join("\n\n");
@@ -383,18 +389,76 @@ function renderBlocks(md: string, byName: Map<string, Region[]>, evals: Eval[]):
 
 // ---------------------------------------------------------------- main
 
-function main() {
-  if (fs.existsSync(`${genDir}.old`))
-    console.warn("! slides/generated.old/ exists: an earlier import was killed while swapping, so generated/ and slides.md may not match. This run regenerates both.");
-  console.log("› lake build");
-  run("lake", ["build"], leanDir, "lake build");
+/** One deck: slides/<id>.md, with its Lean code in lean/{Book,Slides}/<leanDir>/. */
+type Deck = { id: string; leanDir: string; md: string; file: string };
 
+/** A deck's output, fully computed and checked, not yet written. */
+type Output = { deck: Deck; md: string; regions: Region[]; meta: RegionMeta[]; evals: Eval[]; trace: { id: string }[] };
+
+const RE_SEC_DIR = /^Sec(\d+)_(\d+)$/;
+
+function listDecks(only: string[]): Deck[] {
+  const all = fs
+    .readdirSync(slidesDir)
+    .map((f) => f.match(RE_DECK_FILE))
+    .filter((m): m is RegExpMatchArray => m !== null)
+    .map((m) => ({
+      id: `${m[1]}-${m[2]}`,
+      leanDir: `Sec${m[1]}_${m[2]}`,
+      md: path.join(slidesDir, m[0]),
+      file: `slides/${m[0]}`,
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id, "en", { numeric: true }));
+  for (const id of only) if (!all.some((d) => d.id === id)) fail(`no deck "${id}": slides/${id}.md does not exist`);
+  return only.length ? all.filter((d) => only.includes(d.id)) : all;
+}
+
+/**
+ * Every Lean file under lean/Book and lean/Slides must sit in a section directory, or its
+ * markers would be silently ignored. A section directory without a deck is fine (the deck
+ * may not be written yet), but is reported.
+ */
+function checkLeanLayout(decks: Deck[], warnOrphans: boolean) {
+  for (const top of ["Book", "Slides"]) {
+    const dir = path.join(leanDir, top);
+    if (!fs.existsSync(dir)) continue;
+    for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
+      const rel = `lean/${top}/${d.name}`;
+      if (!d.isDirectory() || !RE_SEC_DIR.test(d.name))
+        fail(`${rel}: everything under lean/${top}/ must be in a section directory Sec<chapter>_<section>/`);
+      if (warnOrphans && !decks.some((k) => k.leanDir === d.name))
+        console.warn(`! ${rel}/ has no deck slides/${d.name.replace(RE_SEC_DIR, "$1-$2")}.md; its regions are not checked`);
+    }
+  }
+}
+
+/** The deck's headmatter must name the deck, so the shared components find its data. */
+function checkHeadmatter(md: string, deck: Deck) {
+  const head = md.match(/^---\n([\s\S]*?)\n---\n/);
+  const id = head?.[1].match(/^deck:\s*"?([\w-]+)"?\s*$/m)?.[1];
+  if (id !== deck.id) fail(`${deck.file}: the headmatter must contain "deck: ${deck.id}" (found: ${id ?? "none"})`);
+}
+
+/** lean/lean-toolchain must be the Lean version of the pinned book release (book.json). */
+function checkToolchain() {
+  const book = JSON.parse(fs.readFileSync(path.join(root, "book.json"), "utf8"));
+  const norm = (t: string) => t.trim().replace(/:v?/, ":v");
+  const ours = fs.readFileSync(path.join(leanDir, "lean-toolchain"), "utf8");
+  if (norm(ours) !== norm(book.toolchain))
+    fail(`lean/lean-toolchain is ${ours.trim()}, but book.json pins ${book.release} with ${book.toolchain}`);
+}
+
+function prepare(deck: Deck): Output {
   const regions: Region[] = [];
   const evals: Eval[] = [];
-  for (const f of walk(leanDir).sort()) {
-    const r = parseFile(f);
-    regions.push(...r.regions);
-    evals.push(...r.evals);
+  for (const top of ["Book", "Slides"]) {
+    const dir = path.join(leanDir, top, deck.leanDir);
+    if (!fs.existsSync(dir)) continue;
+    for (const f of walk(dir).sort()) {
+      const r = parseFile(f);
+      regions.push(...r.regions);
+      evals.push(...r.evals);
+    }
   }
   const byName = new Map<string, Region[]>();
   for (const r of regions) {
@@ -408,11 +472,17 @@ function main() {
     list.forEach((r, i) => r.frame !== i + 1 && fail(`${r.source}: frames of "${name}" must be @1, @2, … without gaps`));
   }
 
-  console.log("› lake exe dump-trace");
-  const trace = JSON.parse(run("lake", ["exe", "dump-trace"], leanDir, "lake exe dump-trace"));
+  let trace: { id: string }[] = [];
+  if (fs.existsSync(path.join(leanDir, "Slides", deck.leanDir, "DumpTrace.lean"))) {
+    const exe = `trace-${deck.id}`;
+    console.log(`› lake exe ${exe}`);
+    trace = JSON.parse(run("lake", ["exe", exe], leanDir, `lake exe ${exe}`));
+  }
 
-  const md = renderBlocks(fs.readFileSync(slidesMd, "utf8"), byName, evals);
-  checkSlides(md, new Set(trace.map((t: { id: string }) => t.id)), new Set(byName.keys()));
+  const src = fs.readFileSync(deck.md, "utf8");
+  checkHeadmatter(src, deck);
+  const md = renderBlocks(src, deck.file, deck.id, byName, evals);
+  checkSlides(md, deck.file, new Set(trace.map((t) => t.id)), new Set(byName.keys()));
   const meta: RegionMeta[] = regions.map(({ code, ...rest }) => {
     const at = (kind: string) => `${rest.source} (${rest.name} @${rest.frame}, ${kind})`;
     return {
@@ -422,15 +492,22 @@ function main() {
       intentsHtml: rest.intents.map((t) => renderText(t, at("intent"))),
     };
   });
+  return { deck, md, regions, meta, evals, trace };
+}
 
-  // All checks passed. Write everything to staging paths first, then swap them in
-  // with renames, so a failure while writing leaves the last good output in place.
-  const genNext = `${genDir}.next`;
-  const genOld = `${genDir}.old`;
-  const mdNext = `${slidesMd}.next`;
+/**
+ * Write one deck's output to staging paths first, then swap it in with renames, so a
+ * failure while writing leaves the last good output in place.
+ */
+function write({ deck, md, regions, meta, evals, trace }: Output) {
+  const genDir = path.join(genRoot, deck.id);
+  const genNext = path.join(`${genRoot}.next`, deck.id);
+  const genOld = path.join(`${genRoot}.old`, deck.id);
+  const mdNext = `${deck.md}.next`;
   fs.rmSync(genNext, { recursive: true, force: true });
   fs.rmSync(genOld, { recursive: true, force: true });
   fs.mkdirSync(path.join(genNext, "snippets"), { recursive: true });
+  fs.mkdirSync(path.dirname(genOld), { recursive: true });
   for (const r of regions) fs.writeFileSync(path.join(genNext, "snippets", `${r.name}@${r.frame}.lean`), r.code);
   fs.writeFileSync(path.join(genNext, "regions.json"), JSON.stringify(meta, null, 2) + "\n");
   fs.writeFileSync(path.join(genNext, "evals.json"), JSON.stringify(evals, null, 2) + "\n");
@@ -438,13 +515,14 @@ function main() {
   fs.writeFileSync(mdNext, md);
 
   // The two renames below are not one atomic step. If the second one throws, put the old
-  // generated/ back so the pair stays consistent. If the process is killed between them,
-  // generated.old/ is left behind and the next run says so (any successful run repairs it,
-  // since both outputs are regenerated from lean/).
+  // generated/<id>/ back so the pair stays consistent. If the process is killed between
+  // them, generated.old/<id>/ is left behind and the next run says so (any successful run
+  // repairs it, since both outputs are regenerated from lean/).
+  fs.mkdirSync(genRoot, { recursive: true });
   if (fs.existsSync(genDir)) fs.renameSync(genDir, genOld);
   fs.renameSync(genNext, genDir);
   try {
-    fs.renameSync(mdNext, slidesMd);
+    fs.renameSync(mdNext, deck.md);
   } catch (e) {
     if (fs.existsSync(genOld)) {
       fs.rmSync(genDir, { recursive: true, force: true });
@@ -453,11 +531,33 @@ function main() {
     throw e;
   }
   fs.rmSync(genOld, { recursive: true, force: true });
-  console.log(`✓ ${regions.length} regions, ${evals.length} evals, ${trace.length} traces → slides/generated/`);
+  console.log(`✓ ${deck.id}: ${regions.length} regions, ${evals.length} evals, ${trace.length} traces → slides/generated/${deck.id}/`);
+}
+
+function main() {
+  const only = process.argv.slice(2);
+  const decks = listDecks(only);
+  for (const d of decks)
+    if (fs.existsSync(path.join(`${genRoot}.old`, d.id)))
+      console.warn(`! slides/generated.old/${d.id}/ exists: an earlier import was killed while swapping, so generated/${d.id}/ and ${d.file} may not match. This run regenerates both.`);
+  checkToolchain();
+  checkLeanLayout(decks, only.length === 0);
+  console.log("› lake build");
+  run("lake", ["build"], leanDir, "lake build");
+
+  // Check every deck before writing any.
+  const outputs = decks.map(prepare);
+  outputs.forEach(write);
+  for (const dir of [`${genRoot}.next`, `${genRoot}.old`])
+    if (fs.existsSync(dir) && !fs.readdirSync(dir).length) fs.rmdirSync(dir);
+  // Data of a deck whose slides/<id>.md is gone would still be bundled into every deck.
+  if (!only.length)
+    for (const d of fs.existsSync(genRoot) ? fs.readdirSync(genRoot) : [])
+      if (!decks.some((k) => k.id === d)) console.warn(`! slides/generated/${d}/ has no deck slides/${d}.md; delete it`);
 }
 
 /** Deck-level checks that would otherwise only show up when presenting. */
-function checkSlides(md: string, traceIds: Set<string>, regionNames: Set<string>) {
+function checkSlides(md: string, file: string, traceIds: Set<string>, regionNames: Set<string>) {
   // Slidev uses a slide's *last* HTML comment as speaker notes, so a generated block's
   // closing `<!-- /lean -->` must be followed by another comment before the slide ends.
   const lines = md.split("\n");
@@ -466,7 +566,7 @@ function checkSlides(md: string, traceIds: Set<string>, regionNames: Set<string>
     let j = i + 1;
     while (j < lines.length && lines[j].trim() !== "---" && !lines[j].includes("<!--")) j++;
     if (j >= lines.length || lines[j].trim() === "---")
-      fail(`slides.md:${i + 1}: the slide ends with "<!-- /lean -->", which Slidev would show as speaker notes; end the slide with its lean:notes comment`);
+      fail(`${file}:${i + 1}: the slide ends with "<!-- /lean -->", which Slidev would show as speaker notes; end the slide with its lean:notes comment`);
   });
   // A lean:notes comment must be the slide's last comment, or Slidev shows the later one.
   lines.forEach((line, i) => {
@@ -475,12 +575,12 @@ function checkSlides(md: string, traceIds: Set<string>, regionNames: Set<string>
     while (j < lines.length && !lines[j].includes("-->")) j++;
     for (j++; j < lines.length && lines[j].trim() !== "---"; j++)
       if (lines[j].includes("<!--"))
-        fail(`slides.md:${j + 1}: a comment after "${line.trim()}" (line ${i + 1}) would become the speaker notes; move it above, or into the notes`);
+        fail(`${file}:${j + 1}: a comment after "${line.trim()}" (line ${i + 1}) would become the speaker notes; move it above, or into the notes`);
   });
   for (const m of md.matchAll(/<TraceView\s+run="([^"]+)"/g))
-    if (!traceIds.has(m[1])) fail(`slides.md: <TraceView run="${m[1]}"> — no such run in Slides.allRuns (have: ${[...traceIds].join(", ")})`);
+    if (!traceIds.has(m[1])) fail(`${file}: <TraceView run="${m[1]}"> — no such run in this deck's trace executable (have: ${[...traceIds].join(", ") || "none"})`);
   for (const m of md.matchAll(/<(LeanIntent|LeanCaption|LeanMessages)\b[^>]*?\bname="([^"]+)"/g))
-    if (!regionNames.has(m[2])) fail(`slides.md: <${m[1]} name="${m[2]}"> — no region "${m[2]}" in lean/`);
+    if (!regionNames.has(m[2])) fail(`${file}: <${m[1]} name="${m[2]}"> — no region "${m[2]}" in this deck's Lean directories`);
 }
 
 try {

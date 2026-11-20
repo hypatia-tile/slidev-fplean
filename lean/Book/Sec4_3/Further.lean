@@ -1,4 +1,4 @@
-import Arith.Evaluate
+import Book.Sec4_3.Evaluate
 
 /-!
 FPIL 4.3.3 Further Effects (introduction) and 4.3.3.1 No Effects — the book's code, verbatim.

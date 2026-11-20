@@ -1,4 +1,4 @@
-import Arith.Further
+import Book.Sec4_3.Further
 
 /-!
 FPIL 4.3.3.3 Custom Environments — the book's code, verbatim.

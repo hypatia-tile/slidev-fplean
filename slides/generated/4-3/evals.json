@@ -1,73 +1,73 @@
 [
   {
     "region": "eval-v1@1",
-    "source": "lean/Arith/Evaluate.lean:38",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:38",
     "command": "#eval evaluateOption fourteenDivided",
     "output": "none"
   },
   {
     "region": "eval-v4@1",
-    "source": "lean/Arith/Evaluate.lean:136",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:136",
     "command": "#eval evaluateM applyPrimOption fourteenDivided",
     "output": "none"
   },
   {
     "region": "eval-v4@1",
-    "source": "lean/Arith/Evaluate.lean:140",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:140",
     "command": "#eval evaluateM applyPrimExcept fourteenDivided",
     "output": "Except.error \"Tried to divide 14 by zero\""
   },
   {
     "region": "eval-v5@1",
-    "source": "lean/Arith/Evaluate.lean:192",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:192",
     "command": "#eval evaluateM applyDivOption fourteenDivided",
     "output": "none"
   },
   {
     "region": "eval-v5@1",
-    "source": "lean/Arith/Evaluate.lean:196",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:196",
     "command": "#eval evaluateM applyDivExcept fourteenDivided",
     "output": "Except.error \"Tried to divide 14 by zero\""
   },
   {
     "region": "eval-v5@1",
-    "source": "lean/Arith/Evaluate.lean:200",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:200",
     "command": "#eval evaluateM applyDivOption twoPlusThree",
     "output": "some 5"
   },
   {
     "region": "eval-empty@1",
-    "source": "lean/Arith/Further.lean:76",
+    "source": "lean/Book/Sec4_3/Further.lean:76",
     "command": "open Expr Prim in\n#eval evaluateM (m := Id) applyEmpty (prim plus (const 5) (const (-14)))",
     "output": "-9"
   },
   {
     "region": "eval-adds-to@1",
-    "source": "lean/Arith/Many.lean:110",
+    "source": "lean/Book/Sec4_3/Many.lean:110",
     "command": "#eval printList (addsTo 15 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).takeAll",
     "output": "[7, 8]\n[6, 9]\n[5, 10]\n[4, 5, 6]\n[3, 5, 7]\n[3, 4, 8]\n[2, 6, 7]\n[2, 5, 8]\n[2, 4, 9]\n[2, 3, 10]\n[2, 3, 4, 6]\n[1, 6, 8]\n[1, 5, 9]\n[1, 4, 10]\n[1, 3, 5, 6]\n[1, 3, 4, 7]\n[1, 2, 5, 7]\n[1, 2, 4, 8]\n[1, 2, 3, 9]\n[1, 2, 3, 4, 5]"
   },
   {
     "region": "eval-search@1",
-    "source": "lean/Arith/Many.lean:136",
+    "source": "lean/Book/Sec4_3/Many.lean:136",
     "command": "open Expr Prim NeedsSearch in\n#eval (evaluateM applySearch\n        (prim plus (const 1) (prim (other choose) (const 2) (const 5)))).takeAll",
     "output": "[3, 6]"
   },
   {
     "region": "eval-search@1",
-    "source": "lean/Arith/Many.lean:142",
+    "source": "lean/Book/Sec4_3/Many.lean:142",
     "command": "open Expr Prim NeedsSearch in\n#eval (evaluateM applySearch\n        (prim plus (const 1) (prim (other div) (const 2) (const 0)))).takeAll",
     "output": "[]"
   },
   {
     "region": "eval-search@1",
-    "source": "lean/Arith/Many.lean:148",
+    "source": "lean/Book/Sec4_3/Many.lean:148",
     "command": "open Expr Prim NeedsSearch in\n#eval (evaluateM applySearch\n        (prim (other div) (const 90)\n          (prim plus (prim (other choose) (const (-5)) (const 5)) (const 5)))).takeAll",
     "output": "[9]"
   },
   {
     "region": "eval-reader@1",
-    "source": "lean/Arith/Reader.lean:172",
+    "source": "lean/Book/Sec4_3/Reader.lean:172",
     "command": "open Expr Prim in\n#eval evaluateM applyPrimReader\n        (prim (other \"max\") (prim plus (const 5) (const 4))\n          (prim times (const 3) (const 2)))\n        exampleEnv",
     "output": "9"
   }

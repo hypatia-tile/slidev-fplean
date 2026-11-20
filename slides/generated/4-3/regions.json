@@ -2,7 +2,7 @@
   {
     "name": "evaluate-option",
     "frame": 1,
-    "source": "lean/Arith/Evaluate.lean:15",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:15",
     "steps": {
       "1": [
         2
@@ -44,7 +44,7 @@
   {
     "name": "eval-v1",
     "frame": 1,
-    "source": "lean/Arith/Evaluate.lean:32",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:32",
     "steps": {},
     "notes": [
       "分母が 0 なので none。Option は失敗の理由を運べない。"
@@ -67,7 +67,7 @@
   {
     "name": "evaluate-option",
     "frame": 2,
-    "source": "lean/Arith/Evaluate.lean:45",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:45",
     "steps": {
       "1": [
         1,
@@ -101,7 +101,7 @@
   {
     "name": "evaluate-generic",
     "frame": 1,
-    "source": "lean/Arith/Evaluate.lean:45",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:45",
     "steps": {
       "1": [
         1,
@@ -135,7 +135,7 @@
   {
     "name": "evaluate-generic",
     "frame": 2,
-    "source": "lean/Arith/Evaluate.lean:70",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:70",
     "steps": {
       "1": [
         1,
@@ -167,7 +167,7 @@
   {
     "name": "evaluate-generic",
     "frame": 3,
-    "source": "lean/Arith/Evaluate.lean:96",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:96",
     "steps": {
       "1": [
         7,
@@ -199,7 +199,7 @@
   {
     "name": "eval-v4",
     "frame": 1,
-    "source": "lean/Arith/Evaluate.lean:132",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:132",
     "steps": {},
     "notes": [
       "同じ `evaluateM` が、渡す関数によって違う Monad で動く。"
@@ -214,7 +214,7 @@
   {
     "name": "evaluate-generic",
     "frame": 4,
-    "source": "lean/Arith/Evaluate.lean:147",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:147",
     "steps": {
       "1": [
         1,
@@ -251,7 +251,7 @@
   {
     "name": "evaluate-special",
     "frame": 1,
-    "source": "lean/Arith/Evaluate.lean:147",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:147",
     "steps": {
       "1": [
         1,
@@ -287,7 +287,7 @@
   {
     "name": "eval-v5",
     "frame": 1,
-    "source": "lean/Arith/Evaluate.lean:185",
+    "source": "lean/Book/Sec4_3/Evaluate.lean:185",
     "steps": {},
     "notes": [
       "割り算の関数を差し替えるだけで、同じ evaluateM が Option でも Except でも動く。",
@@ -311,7 +311,7 @@
   {
     "name": "expr",
     "frame": 1,
-    "source": "lean/Arith/Expr.lean:5",
+    "source": "lean/Book/Sec4_3/Expr.lean:5",
     "steps": {
       "1": [
         2
@@ -349,7 +349,7 @@
   {
     "name": "examples",
     "frame": 1,
-    "source": "lean/Arith/Expr.lean:21",
+    "source": "lean/Book/Sec4_3/Expr.lean:21",
     "steps": {},
     "notes": [
       "`twoPlusThree` は失敗しない例、`fourteenDivided` は失敗する例として最後まで使う。"
@@ -372,7 +372,7 @@
   {
     "name": "prim",
     "frame": 1,
-    "source": "lean/Arith/Further.lean:11",
+    "source": "lean/Book/Sec4_3/Further.lean:11",
     "steps": {
       "1": [
         5
@@ -404,7 +404,7 @@
   {
     "name": "evaluate-special",
     "frame": 2,
-    "source": "lean/Arith/Further.lean:26",
+    "source": "lean/Book/Sec4_3/Further.lean:26",
     "steps": {
       "1": [
         1,
@@ -438,7 +438,7 @@
   {
     "name": "apply-empty",
     "frame": 1,
-    "source": "lean/Arith/Further.lean:62",
+    "source": "lean/Book/Sec4_3/Further.lean:62",
     "steps": {},
     "notes": [],
     "captions": [],
@@ -455,7 +455,7 @@
   {
     "name": "eval-empty",
     "frame": 1,
-    "source": "lean/Arith/Further.lean:68",
+    "source": "lean/Book/Sec4_3/Further.lean:68",
     "steps": {},
     "notes": [
       "`nomatch op` は「op の型には構成子がないので、ここには来ない」と Lean に伝える。",
@@ -476,7 +476,7 @@
   {
     "name": "many",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:7",
+    "source": "lean/Book/Sec4_3/Many.lean:7",
     "steps": {
       "1": [
         3
@@ -503,7 +503,7 @@
   {
     "name": "many-ops",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:16",
+    "source": "lean/Book/Sec4_3/Many.lean:16",
     "steps": {
       "1": [
         1
@@ -535,7 +535,7 @@
   {
     "name": "many-bind",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:46",
+    "source": "lean/Book/Sec4_3/Many.lean:46",
     "steps": {
       "1": [
         3
@@ -567,7 +567,7 @@
   {
     "name": "adds-to",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:59",
+    "source": "lean/Book/Sec4_3/Many.lean:59",
     "steps": {
       "1": [
         11
@@ -598,7 +598,7 @@
   {
     "name": "eval-adds-to",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:86",
+    "source": "lean/Book/Sec4_3/Many.lean:86",
     "steps": {},
     "notes": [],
     "captions": [],
@@ -611,7 +611,7 @@
   {
     "name": "apply-search",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:113",
+    "source": "lean/Book/Sec4_3/Many.lean:113",
     "steps": {
       "1": [
         7
@@ -641,7 +641,7 @@
   {
     "name": "eval-search",
     "frame": 1,
-    "source": "lean/Arith/Many.lean:129",
+    "source": "lean/Book/Sec4_3/Many.lean:129",
     "steps": {},
     "notes": [
       "本の三つの例。前のスライドの規則で計算した結果と比べてみる。"
@@ -664,7 +664,7 @@
   {
     "name": "reader",
     "frame": 1,
-    "source": "lean/Arith/Reader.lean:12",
+    "source": "lean/Book/Sec4_3/Reader.lean:12",
     "steps": {
       "1": [
         1
@@ -697,7 +697,7 @@
   {
     "name": "reader-bind",
     "frame": 1,
-    "source": "lean/Arith/Reader.lean:25",
+    "source": "lean/Book/Sec4_3/Reader.lean:25",
     "steps": {},
     "notes": [
       "本:「⊢ は、地下鉄の改札に似ていることから turnstile と呼ばれる」。"
@@ -725,7 +725,7 @@
   {
     "name": "reader-bind",
     "frame": 2,
-    "source": "lean/Arith/Reader.lean:47",
+    "source": "lean/Book/Sec4_3/Reader.lean:47",
     "steps": {},
     "notes": [],
     "captions": [
@@ -747,7 +747,7 @@
   {
     "name": "reader-bind",
     "frame": 3,
-    "source": "lean/Arith/Reader.lean:71",
+    "source": "lean/Book/Sec4_3/Reader.lean:71",
     "steps": {},
     "notes": [],
     "captions": [
@@ -773,7 +773,7 @@
   {
     "name": "reader-bind",
     "frame": 4,
-    "source": "lean/Arith/Reader.lean:100",
+    "source": "lean/Book/Sec4_3/Reader.lean:100",
     "steps": {},
     "notes": [],
     "captions": [
@@ -799,7 +799,7 @@
   {
     "name": "reader-bind",
     "frame": 5,
-    "source": "lean/Arith/Reader.lean:129",
+    "source": "lean/Book/Sec4_3/Reader.lean:129",
     "steps": {},
     "notes": [],
     "captions": [
@@ -816,7 +816,7 @@
   {
     "name": "reader-bind",
     "frame": 6,
-    "source": "lean/Arith/Reader.lean:138",
+    "source": "lean/Book/Sec4_3/Reader.lean:138",
     "steps": {},
     "notes": [],
     "captions": [
@@ -833,7 +833,7 @@
   {
     "name": "reader-instance",
     "frame": 1,
-    "source": "lean/Arith/Reader.lean:144",
+    "source": "lean/Book/Sec4_3/Reader.lean:144",
     "steps": {},
     "notes": [],
     "captions": [],
@@ -846,7 +846,7 @@
   {
     "name": "apply-reader",
     "frame": 1,
-    "source": "lean/Arith/Reader.lean:150",
+    "source": "lean/Book/Sec4_3/Reader.lean:150",
     "steps": {
       "1": [
         3
@@ -877,7 +877,7 @@
   {
     "name": "eval-reader",
     "frame": 1,
-    "source": "lean/Arith/Reader.lean:165",
+    "source": "lean/Book/Sec4_3/Reader.lean:165",
     "steps": {},
     "notes": [
       "evaluateM ... の結果は Reader Env Int、つまり Env → Int なので、最後に exampleEnv を渡している。"
@@ -900,7 +900,7 @@
   {
     "name": "many-laws",
     "frame": 1,
-    "source": "lean/Slides/Laws.lean:29",
+    "source": "lean/Slides/Sec4_3/Laws.lean:29",
     "steps": {},
     "notes": [
       "補題: union の右単位元が none、union の結合律、bind が union に分配すること。いずれも帰納法と simp。"
@@ -923,7 +923,7 @@
   {
     "name": "reader-laws",
     "frame": 1,
-    "source": "lean/Slides/Laws.lean:56",
+    "source": "lean/Slides/Sec4_3/Laws.lean:56",
     "steps": {},
     "notes": [
       "本の計算: Reader.bind (Reader.pure v) f → fun env => f ((Reader.pure v) env) env → … → f v。"
@@ -946,7 +946,7 @@
   {
     "name": "theorem",
     "frame": 1,
-    "source": "lean/Slides/Trace.lean:81",
+    "source": "lean/Slides/Sec4_3/Trace.lean:82",
     "steps": {},
     "notes": [
       "証明は構造的帰納法と simp だけ。結果側は evaluateM と同じ >>= の連鎖で組んでいる。"

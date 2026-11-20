@@ -1,5 +1,5 @@
-import Arith.Many
-import Arith.Reader
+import Book.Sec4_3.Many
+import Book.Sec4_3.Reader
 
 /-!
 The monad contract for `Many` and `Reader`, which the book checks by hand (4.3.3.2,

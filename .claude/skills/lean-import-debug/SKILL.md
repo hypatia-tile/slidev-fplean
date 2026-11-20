@@ -1,14 +1,14 @@
 ---
 name: lean-import-debug
-description: Diagnose a failed `pnpm lean:import` in this repository — Lean build errors, #guard_msgs mismatches, #guard failures, marker errors, unknown regions in slides.md — and fix the cause in the Lean source, asking the owner whenever the fix would change what the deck claims. Use whenever the import script exits non-zero; the owner may say it in Japanese (e.g. "importが失敗した").
+description: Diagnose a failed `pnpm lean:import` in this repository — Lean build errors, #guard_msgs mismatches, #guard failures, marker errors, unknown regions in a deck, deck and toolchain checks — and fix the cause in the Lean source, asking the owner whenever the fix would change what the deck claims. Use whenever the import script exits non-zero; the owner may say it in Japanese (e.g. "importが失敗した").
 ---
 
 # When `pnpm lean:import` fails
 
 Every check runs before anything is written, and writing goes through staging paths
-(`slides/generated.next/`, `slides/slides.md.next`) that are swapped in with two renames.
-So after a failure, `slides/generated/` and `slides.md` still hold the last good state,
-unless the process was killed between the two renames: then `slides/generated.old/` is
+(`slides/generated.next/<id>/`, `slides/<id>.md.next`) that are swapped in with two renames.
+So after a failure, `slides/generated/<id>/` and `slides/<id>.md` still hold the last good state,
+unless the process was killed between the two renames: then `slides/generated.old/<id>/` is
 left behind and the script warns on the next run. Re-running the import repairs both.
 If a `*.next` or `slides/generated.old/` path is left over, the write itself was
 interrupted (disk, permissions): the next successful import removes it.
@@ -26,7 +26,7 @@ what the deck says. Find out why (`git diff lean/`), then **ask the owner** whic
 
 Do not pick one yourself. The deck's claim is the point of the check.
 
-## `lake build failed` with a `#guard` failure (in `lean/Slides/Trace.lean`)
+## `lake build failed` with a `#guard` failure (in `lean/Slides/Sec<c>_<s>/Trace.lean`)
 
 Two kinds of guard live there:
 
@@ -40,7 +40,7 @@ Two kinds of guard live there:
 ## `lake build failed` with an ordinary Lean error
 
 Type error, unknown identifier, etc. Fix it like any Lean error. If the error is in
-`lean/Arith/`, compare with the book first: that code should match the book.
+`lean/Book/`, compare with the book at the pinned release (`book.json`) first: that code should match the book.
 
 If the proof `evaluateTraced_result` breaks after `evaluateTraced` or `V5.evaluateM` changed,
 restore the two to the same `>>=` shape rather than weakening the theorem.
@@ -55,7 +55,7 @@ A `-- caption:` or `-- intent:` of the named region has bad TeX, or a lone `$`. 
 message names the region (`file:line` is its `-- region` line). Fix the TeX; write `\$`
 for a literal dollar, or put code containing `$` in backticks.
 
-## `slides.md: … refers to unknown region`
+## `slides/<id>.md: … refers to unknown region`
 
 The block's name has no `-- region:` in `lean/`. Either the name has a typo, or the region
 was renamed; fix whichever side is wrong.
@@ -66,7 +66,7 @@ Same as above, for a component on the slide: fix the `name` or the `-- region:` 
 
 ## `opens before … is closed`, `never closed`, `without an opening`, `malformed lean marker`
 
-A generated block in `slides.md` lost its `<!-- /lean -->` or has a typo in its opening
+A generated block in the deck lost its `<!-- /lean -->` or has a typo in its opening
 line. Restore the pair as `CLAUDE.md` shows (an empty block is fine; the import fills it).
 
 ## `a comment after "lean:notes …" would become the speaker notes`
@@ -81,12 +81,23 @@ its `lean:notes` comment (or any other comment) after the block.
 
 ## `<TraceView run="…"> — no such run`
 
-The id is not in `Slides.allRuns` (`lean/Slides/Trace.lean`). Fix the typo, or add the run
+The id is not among the runs the deck's `trace-<id>` executable prints (for 4.3: `Slides.allRuns`, `lean/Slides/Sec4_3/Trace.lean`). Fix the typo, or add the run
 there together with a `#guard` pinning its steps.
 
-## `lake exe dump-trace failed` or a JSON parse error
+## `lake exe trace-<id> failed` or a JSON parse error
 
-`lean/DumpTrace.lean` must print exactly one JSON value and nothing else on stdout.
+`lean/Slides/Sec<c>_<s>/DumpTrace.lean` must print exactly one JSON value and nothing else on stdout.
+
+## Deck and layout checks
+
+- `the headmatter must contain "deck: <id>"`: the deck's first `---` block needs
+  `deck: <c>-<s>`, matching its file name. The shared components find the deck's data with it.
+- `lean/lean-toolchain is …, but book.json pins …`: the Lean version and the pinned book
+  release disagree. Moving to a newer book release is a deliberate change for all decks
+  (see `docs/design.md`); do not edit either file to make the import pass without the owner.
+- `everything under lean/Book/ must be in a section directory`: move the file into
+  `Sec<c>_<s>/`. Files outside one would have their markers silently ignored.
+- `no deck "<id>"`: the argument to `pnpm lean:import` names a deck file that does not exist.
 
 ## After the fix
 

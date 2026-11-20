@@ -1,4 +1,4 @@
-import Arith.Expr
+import Book.Sec4_3.Expr
 
 /-!
 FPIL 4.3.2 Evaluating Expressions — the book's code, verbatim.

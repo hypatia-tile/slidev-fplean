@@ -10,9 +10,11 @@ for the marker syntax if it is not already in context.
 
 ## 1. Decide where the Lean goes
 
-- Book code (FPIL 4.3) → `lean/Arith/`. Keep it as in the book. A new version of an
+- Book code of section c.s → `lean/Book/Sec<c>_<s>/`. Keep it as in the pinned release
+  (`book.json`); the book's own example code is under `examples/` at that tag. A new version of an
   existing definition goes in a new `namespace Vn`, never by editing an earlier version.
-- Slide-only helpers (tracing, JSON, extra checks) → `lean/Slides/`.
+- Slide-only helpers (tracing, JSON, extra checks) → `lean/Slides/Sec<c>_<s>/`.
+- Region names need only be unique within the deck.
 
 ## 2. Write the region
 
@@ -48,7 +50,7 @@ for the marker syntax if it is not already in context.
 
 ## 3. A new trace (optional)
 
-Add a `run …` entry to `Slides.allRuns` in `lean/Slides/Trace.lean`, plus two `#guard`s:
+For 4.3: add a `run …` entry to `Slides.allRuns` in `lean/Slides/Sec4_3/Trace.lean`, plus two `#guard`s:
 one that its result equals `V5.evaluateM` on that input (documents the case; the theorem
 `evaluateTraced_result` already covers results), and one that pins its full step sequence.
 Steps are **not** proved, so check the sequence by hand against the evaluation order and
@@ -57,12 +59,13 @@ show it to the owner.
 ## 4. Import
 
 ```sh
-cd slides && pnpm lean:import
+cd slides && pnpm lean:import <c>-<s>
 ```
 
 On failure, use `lean-import-debug`. Do not touch `slides/generated/`.
+A deck's first trace also needs `DumpTrace.lean` and a `trace-<c>-<s>` exe (see `CLAUDE.md`, "A new deck").
 
-## 5. Use it in `slides/slides.md`
+## 5. Use it in `slides/<c>-<s>.md`
 
 Write empty blocks; the script fills them on the next import:
 
@@ -84,7 +87,7 @@ Run `pnpm lean:import` again after adding blocks.
 
 ## 6. Check the narrative
 
-Read only the intents and takeaways (and the deck-level lines in `slides.md`) in slide
+Read only the intents and takeaways (and the deck-level lines in the deck's `.md`) in slide
 order. Each takeaway must motivate the next intent, and the summary must answer the
 question on the opening slides. Fix a gap before building.
 

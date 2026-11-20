@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// Draws one run from generated/trace.json (produced by Lean's `dump-trace`) as an
-// expression tree, and applies one trace step per click.
+// Draws one run from this deck's generated/trace.json (printed by the deck's Lean
+// `trace-<deck>` executable) as an expression tree, and applies one trace step per click.
 import { useSlideContext } from '@slidev/client'
 import { computed, onMounted, onUnmounted, shallowRef, useId } from 'vue'
-import traces from '../generated/trace.json'
+import { traces } from '../utils/deckData'
 
 type Tree = { label: string, children: Tree[] }
 type Step = { kind: 'enter' | 'return' | 'fail', path: number[], value?: string }
@@ -11,9 +11,9 @@ type Run = { id: string, example: string, monad: string, expr: Tree, steps: Step
 
 const props = defineProps<{ run: string, at?: string | number }>()
 
-const data = (traces as Run[]).find(r => r.id === props.run)
+const data = (traces() as Run[]).find(r => r.id === props.run)
 if (!data)
-  throw new Error(`[TraceView] no run "${props.run}" in generated/trace.json — run \`pnpm lean:import\``)
+  throw new Error(`[TraceView] no run "${props.run}" in this deck's generated/trace.json — run \`pnpm lean:import\``)
 
 // ---- clicks: one per step. Registered in onMounted, like Slidev's own ShikiMagicMove,
 // so the start is computed in document order together with v-click and Magic Move.

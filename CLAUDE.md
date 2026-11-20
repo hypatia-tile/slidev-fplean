@@ -1,53 +1,68 @@
-# fplean-4-3-slidev
+# slidev-fplean
 
-A Slidev deck explaining FPIL 4.3 "Example: Arithmetic in Monads" (4.3.1–4.3.3, without the exercises),
-whose code, `#eval` outputs and evaluation traces all come from Lean code that
-`lake build` has checked. This is a prototype for learning what such a workflow needs.
+Slidev decks (in Japanese) for a study group reading *Functional Programming in Lean* (FPIL),
+**one deck per book section**, deployed as one site. Every piece of code, `#eval` output and
+evaluation trace on a slide comes from Lean code that `lake build` has checked.
+Started from the `fplean-4-3-slidev` prototype (4.3 only); `docs/design.md` has the decisions.
 
 ## Layout
 
 ```
 flake.nix, .envrc         devShell: elan, nodejs_24, pnpm   (direnv allow, or nix develop)
-lean/                     Lake project, toolchain in lean/lean-toolchain
-  Arith/Expr.lean         4.3.1, the book's code verbatim
-  Arith/Evaluate.lean     4.3.2, one namespace per version: V1 … V5
-  Arith/Further.lean      4.3.3 intro + 4.3.3.1: Prim, final applyPrim/evaluateM, Empty/Id
-  Arith/Many.lean         4.3.3.2 Nondeterministic Search
-  Arith/Reader.lean       4.3.3.3 Custom Environments (Reader.bind steps in Hole1 … Hole5)
-  Slides/Trace.lean       evaluateTraced + theorem/guards tying it to V5.evaluateM
-  Slides/Laws.lean        monad laws of Many and Reader (the book checks them by hand)
-  DumpTrace.lean          `lake exe dump-trace`: trace JSON on stdout
-slides/                   Slidev project (deck text in Japanese)
-  slides.md               the deck; contains generated blocks (below)
-  components/TraceView.vue  draws one trace run, one step per click
-  components/LeanIntent.vue   `-- intent:` text of the visible frame (above the code)
-  components/LeanCaption.vue  `-- caption:` text of the visible frame (below the code)
-  components/LeanMessages.vue checked messages of the visible frame, like an infoview
-  utils/leanFrame.ts      which frame is visible; shared by the Lean* components
-  generated/              OUTPUT ONLY — written by the import script, committed
+book.json                 the pinned book release (tag, commit, its Lean version)
+NOTICE                    attribution and which files are CC BY 4.0 / MIT
+lean/                     one Lake project for all decks; toolchain in lean/lean-toolchain
+  Book/Sec<c>_<s>/        the book's code for section c.s (CC BY 4.0), e.g. Book/Sec4_3/
+  Slides/Sec<c>_<s>/      slide-only helpers for section c.s: traces, proofs of the book's laws
+  Slides/Sec<c>_<s>/DumpTrace.lean   optional; `lake exe trace-<c>-<s>` prints the deck's traces
+  lakefile.toml           libs Book and Slides (globs, no root module), one trace exe per deck
+slides/                   one Slidev project shared by all decks
+  <c>-<s>.md              the deck of section c.s, e.g. 4-3.md; headmatter `deck: <c>-<s>`
+  components/, utils/     shared: TraceView, LeanIntent, LeanCaption, LeanMessages
+  utils/deckData.ts       picks generated/<deck>/ for the deck being shown
+  generated/<c>-<s>/      OUTPUT ONLY — written by the import script, committed
 scripts/import-lean.ts    the import script
 ```
+
+Section c.s is numbered as in the pinned release (`book.json`). Its deck id is `<c>-<s>`, its
+Lean directories `Sec<c>_<s>`, and its URL on the site `/<c>-<s>/`.
+
+**Sections do not see each other's Lean code** unless one imports the other on purpose: the book
+reuses names across sections, so no module imports two sections that define the same name.
+This is also why the libraries have no root module that imports everything.
 
 ## The one command
 
 ```sh
-cd slides && pnpm lean:import   # lake build → extract → dump-trace → refill slides.md
-pnpm dev                        # preview;  pnpm build  to check the deck compiles
+cd slides && pnpm lean:import [4-3 …]   # lake build → extract → trace → refill the decks
+pnpm dev 4-3.md                         # preview one deck
+pnpm build 4-3.md                       # check that it compiles
 ```
 
-The script checks everything first and changes nothing if any check fails. It then writes
-to `slides/generated.next/` and `slides/slides.md.next` and swaps them in with two renames.
-A failure while writing leaves the last good output in place, and a failed second rename
-puts the old `generated/` back. Only a process killed *between* the two renames can leave
-new `generated/` with old `slides.md`; `slides/generated.old/` is then left behind, the next
-run warns about it, and any successful run repairs both.
+Without arguments the import handles every deck. It checks everything first (all decks) and
+changes nothing if any check fails. It also checks that `lean/lean-toolchain` is the Lean
+version in `book.json`. It then writes each deck to `slides/generated.next/<id>/` and
+`slides/<id>.md.next` and swaps them in with two renames. A failure while writing leaves the
+last good output in place, and a failed second rename puts the old `generated/<id>/` back.
+Only a process killed *between* the two renames can leave new `generated/<id>/` with an old
+`<id>.md`; `slides/generated.old/<id>/` is then left behind, the next run warns about it, and
+any successful run repairs both.
+
+## A new deck
+
+1. Book code in `lean/Book/Sec<c>_<s>/`, helpers in `lean/Slides/Sec<c>_<s>/` (see `slide-from-lean`).
+2. `slides/<c>-<s>.md` with `deck: <c>-<s>` in its headmatter.
+3. Traces only: `lean/Slides/Sec<c>_<s>/DumpTrace.lean` and a `[[lean_exe]] name = "trace-<c>-<s>"`
+   in `lean/lakefile.toml` (also in `defaultTargets`).
+4. `pnpm lean:import <c>-<s>`.
 
 ## Invariants
 
 - **Never edit `slides/generated/` or the inside of a generated block by hand.** Change the
   Lean source and re-run `pnpm lean:import`.
 - **The book's code stays as in the book** (identifiers, structure). Only line breaks may
-  differ. Slide-only helpers go in `lean/Slides/`, never in `lean/Arith/`.
+  differ. Slide-only helpers go in `lean/Slides/`, never in `lean/Book/`. Code that differs
+  from the pinned release (`book.json`) is a bug.
 - **Every `#eval` inside a region is wrapped in `#guard_msgs`.** The script refuses a bare one.
 - **Never change a `#guard_msgs` docstring just to make the build pass** without the owner's
   decision: a mismatch means the code's behaviour changed (see `lean-import-debug`).
@@ -63,7 +78,7 @@ Goal: **before reading any code, the audience can say what problem it solves and
 has this shape; after reading it, they know what to take away and why the next step is
 needed.**
 
-1. **The deck opens with the chapter's question** and a roadmap (in `slides.md`), and closes
+1. **The deck opens with the section's question** and a roadmap (in the deck's `.md`), and closes
    by answering it.
 2. **Every code slide has three layers:** *intent* above the code (`-- intent:`, shown by
    `<LeanIntent>`), the code, and the *takeaway* below it (`-- caption:`, shown by
@@ -80,8 +95,8 @@ needed.**
    they come from `#guard_msgs`.
 
 Where text lives: intent and takeaway of a piece of code → Lean markers next to it.
-The chapter's question, the roadmap, transitions without code, and the summary →
-`slides.md` (a deck-level intent line uses `<div class="lean-intent-static">`).
+The section's question, the roadmap, transitions without code, and the summary →
+the deck's `.md` (a deck-level intent line uses `<div class="lean-intent-static">`).
 
 ## Markers in Lean files
 
@@ -127,12 +142,12 @@ def evaluateOption : Expr Arith → Option Int
   `\$` is a literal dollar, and a `$` inside backticks stays code. The import script
   renders the math and fails on bad TeX or an unmatched `$`. Use math for what the code
   means (e.g. $\lambda x.\, x + 1$ next to `fun x => x + 1`); the code itself stays Lean.
-  Math in `slides.md` and in speaker notes is Slidev's own `$…$`/`$$…$$`.
+  Math in the deck's `.md` and in speaker notes is Slidev's own `$…$`/`$$…$$`.
 - `-- elide-begin` … `-- elide-end`: shown as a single `...`, indented like the first
   elided line. Use it for code that is unchanged or unimportant in that frame, so the
   frame fits on the slide. No `-- step` inside an elided block.
 
-## Generated blocks in `slides/slides.md`
+## Generated blocks in `slides/<c>-<s>.md`
 
 ```md
 <!-- lean:code evaluate -->     code of region "evaluate" (Magic Move if several frames)
@@ -146,7 +161,7 @@ lean:notes evaluate
 -->                             speaker notes from the region's `-- note:` lines
 ```
 
-Write the empty block; the script fills it. Everything else in `slides.md` is hand-written.
+Write the empty block; the script fills it. Everything else in the deck is hand-written.
 
 Intent and takeaway: `<LeanIntent name="<region>" />` before the block and
 `<LeanCaption name="<region>" />` after it. If anything on the slide
@@ -159,7 +174,8 @@ Messages next to code (an infoview): `/-- error: … -/` + `#guard_msgs in` on a
 frame has none). Several messages in one docstring are separated by `---`.
 
 Trace animation: `<TraceView run="<id>" />`, where `<id>` is an `id` in
-`slides/generated/trace.json` (defined in `Slides.allRuns`, `lean/Slides/Trace.lean`).
+the deck's `slides/generated/<c>-<s>/trace.json` (for 4.3: `Slides.allRuns` in
+`lean/Slides/Sec4_3/Trace.lean`).
 
 ## Skills
 
