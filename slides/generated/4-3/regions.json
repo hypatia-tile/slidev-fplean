@@ -1,0 +1,969 @@
+[
+  {
+    "name": "evaluate-option",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:15",
+    "steps": {
+      "1": [
+        2
+      ],
+      "2": [
+        3,
+        4,
+        5
+      ],
+      "3": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "4": [
+        10
+      ]
+    },
+    "notes": [
+      "まずは Option に直接書く。部分式を評価して `>>=` でつなぐ。",
+      "割り算だけが失敗しうる。本は「この関数は二つの関心を混ぜている」と指摘する。"
+    ],
+    "captions": [
+      "動くが、部分式の評価と演算子の適用という二つの関心が一つの関数に混ざっている。"
+    ],
+    "intents": [
+      "割り算は失敗しうるので、評価の結果を `Option Int` にする。部分式の結果は `>>=` でつなぎ、失敗はそのまま外へ伝わる。"
+    ],
+    "messages": [],
+    "range": "{*|2|3-5|6-9|10}",
+    "captionsHtml": [
+      "動くが、部分式の評価と演算子の適用という二つの関心が一つの関数に混ざっている。"
+    ],
+    "intentsHtml": [
+      "割り算は失敗しうるので、評価の結果を <code>Option Int</code> にする。部分式の結果は <code>&gt;&gt;=</code> でつなぎ、失敗はそのまま外へ伝わる。"
+    ]
+  },
+  {
+    "name": "eval-v1",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:32",
+    "steps": {},
+    "notes": [
+      "分母が 0 なので none。Option は失敗の理由を運べない。"
+    ],
+    "captions": [
+      "失敗したことは分かるが、なぜ失敗したかは分からない。本の言葉では「あまり役に立つエラーメッセージではない」。"
+    ],
+    "intents": [
+      "`fourteenDivided` を評価してみる。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "失敗したことは分かるが、なぜ失敗したかは分からない。本の言葉では「あまり役に立つエラーメッセージではない」。"
+    ],
+    "intentsHtml": [
+      "<code>fourteenDivided</code> を評価してみる。"
+    ]
+  },
+  {
+    "name": "evaluate-option",
+    "frame": 2,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:45",
+    "steps": {
+      "1": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "2": [
+        12
+      ]
+    },
+    "notes": [
+      "演算子の適用を `applyPrim` に切り出す。`evaluateOption` は木を辿るだけになる。"
+    ],
+    "captions": [
+      "評価器は木を辿るだけになった。失敗の扱いは `applyPrim` と `>>=` に集まっている。"
+    ],
+    "intents": [
+      "二つの関心を分けるため、演算子の適用を `applyPrim` に切り出す。"
+    ],
+    "messages": [],
+    "range": "{*|1-5|12}",
+    "captionsHtml": [
+      "評価器は木を辿るだけになった。失敗の扱いは <code>applyPrim</code> と <code>&gt;&gt;=</code> に集まっている。"
+    ],
+    "intentsHtml": [
+      "二つの関心を分けるため、演算子の適用を <code>applyPrim</code> に切り出す。"
+    ]
+  },
+  {
+    "name": "evaluate-generic",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:45",
+    "steps": {
+      "1": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "2": [
+        12
+      ]
+    },
+    "notes": [
+      "前のスライドの最後の形から始める。ここから Except に置き換える。"
+    ],
+    "captions": [
+      "`Option` に依存しているのは、二つの型と、失敗を表す `none` だけ。"
+    ],
+    "intents": [
+      "失敗の理由も運びたい。失敗の扱いは `applyPrim` と `>>=` に集まっているので、変える場所は少ないはず。"
+    ],
+    "messages": [],
+    "range": "{*|1-5|12}",
+    "captionsHtml": [
+      "<code>Option</code> に依存しているのは、二つの型と、失敗を表す <code>none</code> だけ。"
+    ],
+    "intentsHtml": [
+      "失敗の理由も運びたい。失敗の扱いは <code>applyPrim</code> と <code>&gt;&gt;=</code> に集まっているので、変える場所は少ないはず。"
+    ]
+  },
+  {
+    "name": "evaluate-generic",
+    "frame": 2,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:70",
+    "steps": {
+      "1": [
+        1,
+        10
+      ],
+      "2": [
+        7
+      ]
+    },
+    "notes": [
+      "エラーメッセージが欲しいので Except String に置き換える。",
+      "本は「>>= を使っていたので、小さな変更で済む」と言う。"
+    ],
+    "captions": [
+      "変わったのは型と失敗の箇所だけ。`>>=` で書いてあったので、評価器の形はそのまま。"
+    ],
+    "intents": [
+      "失敗の理由を文字列で運ぶため、`Option` を `Except String` に置き換える。"
+    ],
+    "messages": [],
+    "range": "{*|1,10|7}",
+    "captionsHtml": [
+      "変わったのは型と失敗の箇所だけ。<code>&gt;&gt;=</code> で書いてあったので、評価器の形はそのまま。"
+    ],
+    "intentsHtml": [
+      "失敗の理由を文字列で運ぶため、<code>Option</code> を <code>Except String</code> に置き換える。"
+    ]
+  },
+  {
+    "name": "evaluate-generic",
+    "frame": 3,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:96",
+    "steps": {
+      "1": [
+        7,
+        8,
+        9
+      ],
+      "2": [
+        14
+      ]
+    },
+    "notes": [
+      "二つの評価器は Monad 以外同じ。`applyPrim` を引数にして一般化する。"
+    ],
+    "captions": [
+      "`evaluateM` は Option でも Except でも動く。ただし `applyPrimOption` と `applyPrimExcept` はまだほとんど同じ。"
+    ],
+    "intents": [
+      "二つの評価器は Monad 以外同じ形。Monad について多相にし、演算子の適用を引数で受け取れば、評価器は一つで済む。"
+    ],
+    "messages": [],
+    "range": "{*|7-9|14}",
+    "captionsHtml": [
+      "<code>evaluateM</code> は Option でも Except でも動く。ただし <code>applyPrimOption</code> と <code>applyPrimExcept</code> はまだほとんど同じ。"
+    ],
+    "intentsHtml": [
+      "二つの評価器は Monad 以外同じ形。Monad について多相にし、演算子の適用を引数で受け取れば、評価器は一つで済む。"
+    ]
+  },
+  {
+    "name": "eval-v4",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:132",
+    "steps": {},
+    "notes": [
+      "同じ `evaluateM` が、渡す関数によって違う Monad で動く。"
+    ],
+    "captions": [],
+    "intents": [],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [],
+    "intentsHtml": []
+  },
+  {
+    "name": "evaluate-generic",
+    "frame": 4,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:147",
+    "steps": {
+      "1": [
+        1,
+        4
+      ],
+      "2": [
+        8,
+        11
+      ],
+      "3": [
+        14,
+        20
+      ]
+    },
+    "notes": [
+      "Option 版と Except 版で違うのは割り算だけ。そこだけを引数にする。",
+      "本の結論:「二つのコードパスが失敗の扱いだけで異なることが、完全に明らかになった」。"
+    ],
+    "captions": [
+      "二つの評価の違いは失敗の扱いだけ、ということがコードの形で明らかになった。"
+    ],
+    "intents": [
+      "二つの `applyPrim` で違うのは割り算の扱いだけ。違う部分だけを `applyDiv` として引数にする。"
+    ],
+    "messages": [],
+    "range": "{*|1,4|8,11|14,20}",
+    "captionsHtml": [
+      "二つの評価の違いは失敗の扱いだけ、ということがコードの形で明らかになった。"
+    ],
+    "intentsHtml": [
+      "二つの <code>applyPrim</code> で違うのは割り算の扱いだけ。違う部分だけを <code>applyDiv</code> として引数にする。"
+    ]
+  },
+  {
+    "name": "evaluate-special",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:147",
+    "steps": {
+      "1": [
+        1,
+        4
+      ],
+      "2": [
+        8,
+        11
+      ],
+      "3": [
+        14,
+        20
+      ]
+    },
+    "notes": [
+      "4.3.2 の最後の形から始める。"
+    ],
+    "captions": [
+      "4.3.2 の最後の形。演算子の型は `Arith` で、割り算だけが引数 `applyDiv` に任されている。"
+    ],
+    "intents": [
+      "割り算専用の引数 `applyDiv` を、どんな特別な演算子でも処理する `applySpecial` に広げる。"
+    ],
+    "messages": [],
+    "range": "{*|1,4|8,11|14,20}",
+    "captionsHtml": [
+      "4.3.2 の最後の形。演算子の型は <code>Arith</code> で、割り算だけが引数 <code>applyDiv</code> に任されている。"
+    ],
+    "intentsHtml": [
+      "割り算専用の引数 <code>applyDiv</code> を、どんな特別な演算子でも処理する <code>applySpecial</code> に広げる。"
+    ]
+  },
+  {
+    "name": "eval-v5",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Evaluate.lean:185",
+    "steps": {},
+    "notes": [
+      "割り算の関数を差し替えるだけで、同じ evaluateM が Option でも Except でも動く。",
+      "失敗しない式ではどちらも普通に値を返す。"
+    ],
+    "captions": [
+      "一つの評価器が、失敗を `none` でも理由つきのエラーでも表せる。失敗しない式では普通に値が返る。"
+    ],
+    "intents": [
+      "同じ `evaluateM` に、割り算の扱いだけを差し替えて渡す。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "一つの評価器が、失敗を <code>none</code> でも理由つきのエラーでも表せる。失敗しない式では普通に値が返る。"
+    ],
+    "intentsHtml": [
+      "同じ <code>evaluateM</code> に、割り算の扱いだけを差し替えて渡す。"
+    ]
+  },
+  {
+    "name": "expr",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Expr.lean:5",
+    "steps": {
+      "1": [
+        2
+      ],
+      "2": [
+        3
+      ],
+      "3": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "notes": [
+      "本の定義どおり「整数リテラル、または二つの式に適用された基本演算子」。",
+      "クリックで const（葉）→ prim（節）→ 演算子の型 Arith の順に強調する。"
+    ],
+    "captions": [
+      "式の形（`Expr`）と演算子の集合（`Arith`）は別の型。演算子の種類は型引数 `op` で受け取る。"
+    ],
+    "intents": [
+      "算術式を、整数定数を葉、二項演算を節とする木として、帰納型で表す。"
+    ],
+    "messages": [],
+    "range": "{*|2|3|5-9}",
+    "captionsHtml": [
+      "式の形（<code>Expr</code>）と演算子の集合（<code>Arith</code>）は別の型。演算子の種類は型引数 <code>op</code> で受け取る。"
+    ],
+    "intentsHtml": [
+      "算術式を、整数定数を葉、二項演算を節とする木として、帰納型で表す。"
+    ]
+  },
+  {
+    "name": "examples",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Expr.lean:21",
+    "steps": {},
+    "notes": [
+      "`twoPlusThree` は失敗しない例、`fourteenDivided` は失敗する例として最後まで使う。"
+    ],
+    "captions": [
+      "`fourteenDivided` = 14 / (45 − 5 × 9) の分母は 0。評価器はこの失敗をどう表せばよいか？"
+    ],
+    "intents": [
+      "評価器を試すための式を二つ用意する。普通に計算できる式と、ゼロ除算を含む式。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "<code>fourteenDivided</code> = 14 / (45 − 5 × 9) の分母は 0。評価器はこの失敗をどう表せばよいか？"
+    ],
+    "intentsHtml": [
+      "評価器を試すための式を二つ用意する。普通に計算できる式と、ゼロ除算を含む式。"
+    ]
+  },
+  {
+    "name": "prim",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Further.lean:11",
+    "steps": {
+      "1": [
+        5
+      ],
+      "2": [
+        7,
+        8
+      ]
+    },
+    "notes": [
+      "本:「割り算の唯一の副作用は失敗だが、ほかの基本演算子を式に足せば、ほかの作用も表せる」。",
+      "そのための最初の一歩が、割り算をプリミティブの型から取り出すこと。"
+    ],
+    "captions": [
+      "割り算は `CanFail` という別の型になった。本によれば、この名前は「割り算の作用は失敗しうること」を表す。"
+    ],
+    "intents": [
+      "作用を持つのは割り算だけ。基本演算子（足し算・引き算・掛け算）と「特別な演算子」を分け、特別な演算子の型を `special` として受け取る。"
+    ],
+    "messages": [],
+    "range": "{*|5|7-8}",
+    "captionsHtml": [
+      "割り算は <code>CanFail</code> という別の型になった。本によれば、この名前は「割り算の作用は失敗しうること」を表す。"
+    ],
+    "intentsHtml": [
+      "作用を持つのは割り算だけ。基本演算子（足し算・引き算・掛け算）と「特別な演算子」を分け、特別な演算子の型を <code>special</code> として受け取る。"
+    ]
+  },
+  {
+    "name": "evaluate-special",
+    "frame": 2,
+    "source": "lean/Book/Sec4_3/Further.lean:26",
+    "steps": {
+      "1": [
+        1,
+        4
+      ],
+      "2": [
+        8,
+        9,
+        11
+      ],
+      "3": [
+        14,
+        15,
+        20
+      ]
+    },
+    "notes": [
+      "割り算専用だった引数を、任意の特別な演算子を処理する引数に広げる。"
+    ],
+    "captions": [
+      "評価器の形は変わらない。`Prim.other` は `applySpecial` に任され、作用は渡す関数と Monad が決める。"
+    ],
+    "intents": [],
+    "messages": [],
+    "range": "{*|1,4|8-9,11|14-15,20}",
+    "captionsHtml": [
+      "評価器の形は変わらない。<code>Prim.other</code> は <code>applySpecial</code> に任され、作用は渡す関数と Monad が決める。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "apply-empty",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Further.lean:62",
+    "steps": {},
+    "notes": [],
+    "captions": [],
+    "intents": [
+      "特別な演算子が一つもない式。値を持たない型 `Empty` を `special` にすると、`Prim.other` は作れない。だから `applyEmpty` は決して呼ばれず、結果を返す必要もない。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [],
+    "intentsHtml": [
+      "特別な演算子が一つもない式。値を持たない型 <code>Empty</code> を <code>special</code> にすると、<code>Prim.other</code> は作れない。だから <code>applyEmpty</code> は決して呼ばれず、結果を返す必要もない。"
+    ]
+  },
+  {
+    "name": "eval-empty",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Further.lean:68",
+    "steps": {},
+    "notes": [
+      "`nomatch op` は「op の型には構成子がないので、ここには来ない」と Lean に伝える。",
+      "本: Scala や Kotlin の Nothing に似ている。",
+      "(m := Id) で Monad を明示している。Id は「何もしない」Monad。"
+    ],
+    "captions": [
+      "結果を返さないので、`applyEmpty` はどんな Monad でも使える。恒等 Monad `Id` を選ぶと、作用のまったくない普通の計算になる。"
+    ],
+    "intents": [],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "結果を返さないので、<code>applyEmpty</code> はどんな Monad でも使える。恒等 Monad <code>Id</code> を選ぶと、作用のまったくない普通の計算になる。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "many",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:7",
+    "steps": {
+      "1": [
+        3
+      ]
+    },
+    "notes": [
+      "本:「この型は List によく似ている。違いは List.cons が残りのリストを持つのに対し、more は残りを必要に応じて計算する関数を持つこと」。"
+    ],
+    "captions": [
+      "`List` に似ているが、`more` は残りの答えそのものではなく、残りを必要になったときに計算する関数を持つ。だから、欲しい数だけ答えが見つかれば探索を止められる。"
+    ],
+    "intents": [
+      "答えの多重集合を表す Monad を作る。答えがない場合と、一つの答えに「残りの答え」が続く場合を表せればよい。"
+    ],
+    "messages": [],
+    "range": "{*|3}",
+    "captionsHtml": [
+      "<code>List</code> に似ているが、<code>more</code> は残りの答えそのものではなく、残りを必要になったときに計算する関数を持つ。だから、欲しい数だけ答えが見つかれば探索を止められる。"
+    ],
+    "intentsHtml": [
+      "答えの多重集合を表す Monad を作る。答えがない場合と、一つの答えに「残りの答え」が続く場合を表せればよい。"
+    ]
+  },
+  {
+    "name": "many-ops",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:16",
+    "steps": {
+      "1": [
+        1
+      ],
+      "2": [
+        3,
+        4,
+        5
+      ]
+    },
+    "notes": [
+      "本: 和は、最初の多重集合が空なら二つ目そのもの。そうでなければ、最初の要素に「残り と 二つ目 の和」を続けたもの。"
+    ],
+    "captions": [
+      "リストから作る `fromList`、答えを取り出す `take`・`takeAll` もある。取り出す側は、`more` の関数を呼ぶたびに次の答えを計算する。"
+    ],
+    "intents": [
+      "答えが一つの場合と、二つの多重集合の和を定義する。和は、最初の多重集合の答えを順に並べ、その後ろに二つ目を続ける。"
+    ],
+    "messages": [],
+    "range": "{*|1|3-5}",
+    "captionsHtml": [
+      "リストから作る <code>fromList</code>、答えを取り出す <code>take</code>・<code>takeAll</code> もある。取り出す側は、<code>more</code> の関数を呼ぶたびに次の答えを計算する。"
+    ],
+    "intentsHtml": [
+      "答えが一つの場合と、二つの多重集合の和を定義する。和は、最初の多重集合の答えを順に並べ、その後ろに二つ目を続ける。"
+    ]
+  },
+  {
+    "name": "many-bind",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:46",
+    "steps": {
+      "1": [
+        3
+      ],
+      "2": [
+        5,
+        6,
+        7
+      ]
+    },
+    "notes": [
+      "本: 最初の段階が三つの答えを返したら、二つ目の段階は三つすべてについて試す必要がある。それらの和が探索空間全体を表す。"
+    ],
+    "captions": [
+      "`one` と `bind` で `Monad Many` のインスタンスができる。本はモナド則を手で確かめている。"
+    ],
+    "intents": [
+      "二つの処理をつなぐ `bind` は、最初の段階のすべての答えに残りの処理を試し、その結果の和をとる。$\\mathrm{bind}\\ \\{v_1, \\dots, v_n\\}\\ f = f\\,v_1 \\cup \\dots \\cup f\\,v_n$"
+    ],
+    "messages": [],
+    "range": "{*|3|5-7}",
+    "captionsHtml": [
+      "<code>one</code> と <code>bind</code> で <code>Monad Many</code> のインスタンスができる。本はモナド則を手で確かめている。"
+    ],
+    "intentsHtml": [
+      "二つの処理をつなぐ <code>bind</code> は、最初の段階のすべての答えに残りの処理を試し、その結果の和をとる。<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mrow><mi mathvariant=\"normal\">b</mi><mi mathvariant=\"normal\">i</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">d</mi></mrow><mtext> </mtext><mo stretchy=\"false\">{</mo><msub><mi>v</mi><mn>1</mn></msub><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><msub><mi>v</mi><mi>n</mi></msub><mo stretchy=\"false\">}</mo><mtext> </mtext><mi>f</mi><mo>=</mo><mi>f</mi><mtext> </mtext><msub><mi>v</mi><mn>1</mn></msub><mo>∪</mo><mo>⋯</mo><mo>∪</mo><mi>f</mi><mtext> </mtext><msub><mi>v</mi><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">\\mathrm{bind}\\ \\{v_1, \\dots, v_n\\}\\ f = f\\,v_1 \\cup \\dots \\cup f\\,v_n</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\"><span class=\"mord mathrm\">bind</span></span><span class=\"mspace\"> </span><span class=\"mopen\">{</span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.0359em;\">v</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3011em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"katex-sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">1</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mpunct\">,</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"minner\">…</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mpunct\">,</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.0359em;\">v</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1514em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"katex-sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mclose\">}</span><span class=\"mspace\"> </span><span class=\"mord mathnormal\" style=\"margin-right:0.1076em;\">f</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.8889em;vertical-align:-0.1944em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.1076em;\">f</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.0359em;\">v</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3011em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"katex-sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">1</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">∪</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.5556em;\"></span><span class=\"minner\">⋯</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">∪</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.8889em;vertical-align:-0.1944em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.1076em;\">f</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.0359em;\">v</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1514em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"katex-sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span></span></span></span>"
+    ]
+  },
+  {
+    "name": "adds-to",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:59",
+    "steps": {
+      "1": [
+        11
+      ],
+      "2": [
+        12,
+        13
+      ]
+    },
+    "notes": [
+      "本: 先頭が候補なら、答えはそれを含むか含まないかのどちらか。含まない答えは残りへの再帰で、含む答えは目標から先頭を引いて再帰し、先頭を付け足して得る。"
+    ],
+    "captions": [
+      "目標より大きい数は使えない。空のリストに着いたとき、目標が 0 なら成功、そうでなければ失敗（答えなし）。"
+    ],
+    "intents": [
+      "合計がちょうど目標になる組をすべて探す。先頭の数を使う場合と使わない場合を `union` で合わせる。"
+    ],
+    "messages": [],
+    "range": "{*|11|12-13}",
+    "captionsHtml": [
+      "目標より大きい数は使えない。空のリストに着いたとき、目標が 0 なら成功、そうでなければ失敗（答えなし）。"
+    ],
+    "intentsHtml": [
+      "合計がちょうど目標になる組をすべて探す。先頭の数を使う場合と使わない場合を <code>union</code> で合わせる。"
+    ]
+  },
+  {
+    "name": "eval-adds-to",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:86",
+    "steps": {},
+    "notes": [],
+    "captions": [],
+    "intents": [],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [],
+    "intentsHtml": []
+  },
+  {
+    "name": "apply-search",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:113",
+    "steps": {
+      "1": [
+        7
+      ],
+      "2": [
+        9
+      ]
+    },
+    "notes": [
+      "本:「適切な Monad があれば、まったく同じ evaluateM が、失敗しない答えの集合を非決定的に探索できる」。"
+    ],
+    "captions": [
+      "`evaluateM` は 4.3.3 冒頭のものをそのまま使う。変わったのは、特別な演算子の型と、それを処理する関数だけ。"
+    ],
+    "intents": [
+      "評価器に戻る。割り算に加えて、二つの引数のどちらかを選ぶ演算子 `choose` を特別な演算子にする。ゼロ除算はその選び方を無効にする（答えなし）。"
+    ],
+    "messages": [],
+    "range": "{*|7|9}",
+    "captionsHtml": [
+      "<code>evaluateM</code> は 4.3.3 冒頭のものをそのまま使う。変わったのは、特別な演算子の型と、それを処理する関数だけ。"
+    ],
+    "intentsHtml": [
+      "評価器に戻る。割り算に加えて、二つの引数のどちらかを選ぶ演算子 <code>choose</code> を特別な演算子にする。ゼロ除算はその選び方を無効にする（答えなし）。"
+    ]
+  },
+  {
+    "name": "eval-search",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Many.lean:129",
+    "steps": {},
+    "notes": [
+      "本の三つの例。前のスライドの規則で計算した結果と比べてみる。"
+    ],
+    "captions": [
+      "順に $1 + \\mathrm{choose}(2, 5)$、$1 + 2 / 0$、$90 / (\\mathrm{choose}(-5, 5) + 5)$。三つ目では $-5$ を選ぶとゼロ除算になり、その選び方は捨てられる。"
+    ],
+    "intents": [
+      "規則のスライドで見た本の三つの式を、`applySearch` を渡した `evaluateM` で評価し、答えをすべて取り出す。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "順に <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mrow><mi mathvariant=\"normal\">c</mi><mi mathvariant=\"normal\">h</mi><mi mathvariant=\"normal\">o</mi><mi mathvariant=\"normal\">o</mi><mi mathvariant=\"normal\">s</mi><mi mathvariant=\"normal\">e</mi></mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">1 + \\mathrm{choose}(2, 5)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.7278em;vertical-align:-0.0833em;\"></span><span class=\"mord\">1</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">+</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\"><span class=\"mord mathrm\">choose</span></span><span class=\"mopen\">(</span><span class=\"mord\">2</span><span class=\"mpunct\">,</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\">5</span><span class=\"mclose\">)</span></span></span></span>、<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mn>2</mn><mi mathvariant=\"normal\">/</mi><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">1 + 2 / 0</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.7278em;vertical-align:-0.0833em;\"></span><span class=\"mord\">1</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">+</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\">2/0</span></span></span></span>、<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>90</mn><mi mathvariant=\"normal\">/</mi><mo stretchy=\"false\">(</mo><mrow><mi mathvariant=\"normal\">c</mi><mi mathvariant=\"normal\">h</mi><mi mathvariant=\"normal\">o</mi><mi mathvariant=\"normal\">o</mi><mi mathvariant=\"normal\">s</mi><mi mathvariant=\"normal\">e</mi></mrow><mo stretchy=\"false\">(</mo><mo>−</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>5</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">90 / (\\mathrm{choose}(-5, 5) + 5)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\">90/</span><span class=\"mopen\">(</span><span class=\"mord\"><span class=\"mord mathrm\">choose</span></span><span class=\"mopen\">(</span><span class=\"mord\">−</span><span class=\"mord\">5</span><span class=\"mpunct\">,</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\">5</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">+</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\">5</span><span class=\"mclose\">)</span></span></span></span>。三つ目では <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>−</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">-5</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.7278em;vertical-align:-0.0833em;\"></span><span class=\"mord\">−</span><span class=\"mord\">5</span></span></span></span> を選ぶとゼロ除算になり、その選び方は捨てられる。"
+    ],
+    "intentsHtml": [
+      "規則のスライドで見た本の三つの式を、<code>applySearch</code> を渡した <code>evaluateM</code> で評価し、答えをすべて取り出す。"
+    ]
+  },
+  {
+    "name": "reader",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Reader.lean:12",
+    "steps": {
+      "1": [
+        1
+      ],
+      "2": [
+        3
+      ],
+      "3": [
+        5
+      ]
+    },
+    "notes": [
+      "本: 関数を Monad として使うものは、ふつう reader monad と呼ばれる。"
+    ],
+    "captions": [
+      "定数は環境によらず同じ値になる（$\\lambda e.\\, n$）。だから `pure` は定数関数にする。慣習で、環境はギリシャ文字 ρ（ロー）で書く。"
+    ],
+    "intents": [
+      "環境を読む作用を、環境を受け取る関数として表す。`read` は環境そのものを返す作用。"
+    ],
+    "messages": [],
+    "range": "{*|1|3|5}",
+    "captionsHtml": [
+      "定数は環境によらず同じ値になる（<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>λ</mi><mi>e</mi><mi mathvariant=\"normal\">.</mi><mtext> </mtext><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">\\lambda e.\\, n</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.6944em;\"></span><span class=\"mord mathnormal\">λ</span><span class=\"mord mathnormal\">e</span><span class=\"mord\">.</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord mathnormal\">n</span></span></span></span>）。だから <code>pure</code> は定数関数にする。慣習で、環境はギリシャ文字 ρ（ロー）で書く。"
+    ],
+    "intentsHtml": [
+      "環境を読む作用を、環境を受け取る関数として表す。<code>read</code> は環境そのものを返す作用。"
+    ]
+  },
+  {
+    "name": "reader-bind",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Reader.lean:25",
+    "steps": {},
+    "notes": [
+      "本:「⊢ は、地下鉄の改札に似ていることから turnstile と呼ばれる」。"
+    ],
+    "captions": [
+      "⊢ の右が、`_` に求められている型。左は使える変数。欲しいのは関数 `ρ → β` なので、まず `fun` で包む。"
+    ],
+    "intents": [
+      "`bind` の型 $(\\rho \\to \\alpha) \\to (\\alpha \\to \\rho \\to \\beta) \\to (\\rho \\to \\beta)$ を書き、本体を `_` にして、Lean に何が必要かを尋ねる。"
+    ],
+    "messages": [
+      {
+        "severity": "error",
+        "text": "don't know how to synthesize placeholder\ncontext:\nρ α β : Type\nresult : ρ → α\nnext : α → ρ → β\n⊢ ρ → β"
+      }
+    ],
+    "range": "",
+    "captionsHtml": [
+      "⊢ の右が、<code>_</code> に求められている型。左は使える変数。欲しいのは関数 <code>ρ → β</code> なので、まず <code>fun</code> で包む。"
+    ],
+    "intentsHtml": [
+      "<code>bind</code> の型 <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>ρ</mi><mo>→</mo><mi>α</mi><mo stretchy=\"false\">)</mo><mo>→</mo><mo stretchy=\"false\">(</mo><mi>α</mi><mo>→</mo><mi>ρ</mi><mo>→</mo><mi>β</mi><mo stretchy=\"false\">)</mo><mo>→</mo><mo stretchy=\"false\">(</mo><mi>ρ</mi><mo>→</mo><mi>β</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(\\rho \\to \\alpha) \\to (\\alpha \\to \\rho \\to \\beta) \\to (\\rho \\to \\beta)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mopen\">(</span><span class=\"mord mathnormal\">ρ</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">→</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.0037em;\">α</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">→</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mopen\">(</span><span class=\"mord mathnormal\" style=\"margin-right:0.0037em;\">α</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">→</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.625em;vertical-align:-0.1944em;\"></span><span class=\"mord mathnormal\">ρ</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">→</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.0528em;\">β</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">→</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mopen\">(</span><span class=\"mord mathnormal\">ρ</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">→</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.0528em;\">β</span><span class=\"mclose\">)</span></span></span></span> を書き、本体を <code>_</code> にして、Lean に何が必要かを尋ねる。"
+    ]
+  },
+  {
+    "name": "reader-bind",
+    "frame": 2,
+    "source": "lean/Book/Sec4_3/Reader.lean:47",
+    "steps": {},
+    "notes": [],
+    "captions": [
+      "引数 `env` が文脈に現れ、求められる型は `β` になった。`β` を作れるのは `next` だけで、引数を二つ取る。"
+    ],
+    "intents": [],
+    "messages": [
+      {
+        "severity": "error",
+        "text": "don't know how to synthesize placeholder\ncontext:\nρ α β : Type\nresult : ρ → α\nnext : α → ρ → β\nenv : ρ\n⊢ β"
+      }
+    ],
+    "range": "",
+    "captionsHtml": [
+      "引数 <code>env</code> が文脈に現れ、求められる型は <code>β</code> になった。<code>β</code> を作れるのは <code>next</code> だけで、引数を二つ取る。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "reader-bind",
+    "frame": 3,
+    "source": "lean/Book/Sec4_3/Reader.lean:71",
+    "steps": {},
+    "notes": [],
+    "captions": [
+      "一つ目の `_` には `α` が、二つ目には `ρ` が求められている。`α` を作れるのは `result` だけ。"
+    ],
+    "intents": [],
+    "messages": [
+      {
+        "severity": "error",
+        "text": "don't know how to synthesize placeholder\ncontext:\nρ α β : Type\nresult : ρ → α\nnext : α → ρ → β\nenv : ρ\n⊢ α"
+      },
+      {
+        "severity": "error",
+        "text": "don't know how to synthesize placeholder\ncontext:\nρ α β : Type\nresult : ρ → α\nnext : α → ρ → β\nenv : ρ\n⊢ ρ"
+      }
+    ],
+    "range": "",
+    "captionsHtml": [
+      "一つ目の <code>_</code> には <code>α</code> が、二つ目には <code>ρ</code> が求められている。<code>α</code> を作れるのは <code>result</code> だけ。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "reader-bind",
+    "frame": 4,
+    "source": "lean/Book/Sec4_3/Reader.lean:100",
+    "steps": {},
+    "notes": [],
+    "captions": [
+      "二つの `_` のどちらにも `ρ` が求められている。手元の `ρ` は `env` だけ。"
+    ],
+    "intents": [],
+    "messages": [
+      {
+        "severity": "error",
+        "text": "don't know how to synthesize placeholder\ncontext:\nρ α β : Type\nresult : ρ → α\nnext : α → ρ → β\nenv : ρ\n⊢ ρ"
+      },
+      {
+        "severity": "error",
+        "text": "don't know how to synthesize placeholder\ncontext:\nρ α β : Type\nresult : ρ → α\nnext : α → ρ → β\nenv : ρ\n⊢ ρ"
+      }
+    ],
+    "range": "",
+    "captionsHtml": [
+      "二つの <code>_</code> のどちらにも <code>ρ</code> が求められている。手元の <code>ρ</code> は <code>env</code> だけ。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "reader-bind",
+    "frame": 5,
+    "source": "lean/Book/Sec4_3/Reader.lean:129",
+    "steps": {},
+    "notes": [],
+    "captions": [
+      "型が埋まった。`Reader` の定義を戻し、型の明示を片付ける（次）。"
+    ],
+    "intents": [],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "型が埋まった。<code>Reader</code> の定義を戻し、型の明示を片付ける（次）。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "reader-bind",
+    "frame": 6,
+    "source": "lean/Book/Sec4_3/Reader.lean:138",
+    "steps": {},
+    "notes": [],
+    "captions": [
+      "`Id` の `bind` と同じ形で、追加の引数（環境）を両方に渡すだけ。本:「型に従うだけで正しい関数が書けるとは限らないが、`_` を埋める過程から洞察が得られることもある」。"
+    ],
+    "intents": [],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "<code>Id</code> の <code>bind</code> と同じ形で、追加の引数（環境）を両方に渡すだけ。本:「型に従うだけで正しい関数が書けるとは限らないが、<code>_</code> を埋める過程から洞察が得られることもある」。"
+    ],
+    "intentsHtml": []
+  },
+  {
+    "name": "reader-instance",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Reader.lean:144",
+    "steps": {},
+    "notes": [],
+    "captions": [],
+    "intents": [],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [],
+    "intentsHtml": []
+  },
+  {
+    "name": "apply-reader",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Reader.lean:150",
+    "steps": {
+      "1": [
+        3
+      ],
+      "2": [
+        6,
+        7
+      ]
+    },
+    "notes": [
+      "本: 評価器に環境の引数を足して再帰のたびに渡す、と考えるかもしれない。だが適切な Monad インスタンスがあれば、評価器は変えずに使える。"
+    ],
+    "captions": [
+      "`evaluateM` はそのまま。環境を受け取る引数を足す必要はない。本:「このように引数を渡すことも、Monad の一つの形」。"
+    ],
+    "intents": [
+      "環境は、演算子の名前と実装の組のリスト。演算子を文字列で書き、環境から実装を引いて適用する。知らない演算子は 0 にする。"
+    ],
+    "messages": [],
+    "range": "{*|3|6-7}",
+    "captionsHtml": [
+      "<code>evaluateM</code> はそのまま。環境を受け取る引数を足す必要はない。本:「このように引数を渡すことも、Monad の一つの形」。"
+    ],
+    "intentsHtml": [
+      "環境は、演算子の名前と実装の組のリスト。演算子を文字列で書き、環境から実装を引いて適用する。知らない演算子は 0 にする。"
+    ]
+  },
+  {
+    "name": "eval-reader",
+    "frame": 1,
+    "source": "lean/Book/Sec4_3/Reader.lean:165",
+    "steps": {},
+    "notes": [
+      "evaluateM ... の結果は Reader Env Int、つまり Env → Int なので、最後に exampleEnv を渡している。"
+    ],
+    "captions": [
+      "評価の結果は「環境を待つ関数」。`exampleEnv` を渡すと、`\"max\"` が `max` に引かれて $\\max(5 + 4,\\ 3 \\times 2)$ が計算される。"
+    ],
+    "intents": [
+      "利用者定義の演算子 `\"max\"` を含む式を、`applyPrimReader` を渡した `evaluateM` で評価する。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "評価の結果は「環境を待つ関数」。<code>exampleEnv</code> を渡すと、<code>&quot;max&quot;</code> が <code>max</code> に引かれて <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>max</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mn>5</mn><mo>+</mo><mn>4</mn><mo separator=\"true\">,</mo><mtext> </mtext><mn>3</mn><mo>×</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\max(5 + 4,\\ 3 \\times 2)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mop\">max</span><span class=\"mopen\">(</span><span class=\"mord\">5</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">+</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:0.8389em;vertical-align:-0.1944em;\"></span><span class=\"mord\">4</span><span class=\"mpunct\">,</span><span class=\"mspace\"> </span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\">3</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">×</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\">2</span><span class=\"mclose\">)</span></span></span></span> が計算される。"
+    ],
+    "intentsHtml": [
+      "利用者定義の演算子 <code>&quot;max&quot;</code> を含む式を、<code>applyPrimReader</code> を渡した <code>evaluateM</code> で評価する。"
+    ]
+  },
+  {
+    "name": "many-laws",
+    "frame": 1,
+    "source": "lean/Slides/Sec4_3/Laws.lean:29",
+    "steps": {},
+    "notes": [
+      "補題: union の右単位元が none、union の結合律、bind が union に分配すること。いずれも帰納法と simp。"
+    ],
+    "captions": [
+      "本は多重集合 $\\{v_1, \\dots, v_n\\}$ として論じる。ここでは `Many` の値そのものが等しいことを証明している（答えの順序も含めて）。"
+    ],
+    "intents": [
+      "本が手で確かめた `Many` のモナド則を、Lean で証明しておく。和 `union` の結合律などの補題を使った帰納法。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "本は多重集合 <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><msub><mi>v</mi><mn>1</mn></msub><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><msub><mi>v</mi><mi>n</mi></msub><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{v_1, \\dots, v_n\\}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"katex-base\"><span class=\"katex-strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mopen\">{</span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.0359em;\">v</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3011em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"katex-sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">1</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mpunct\">,</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"minner\">…</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mpunct\">,</span><span class=\"mspace\" style=\"margin-right:0.1667em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.0359em;\">v</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1514em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"katex-sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mclose\">}</span></span></span></span> として論じる。ここでは <code>Many</code> の値そのものが等しいことを証明している（答えの順序も含めて）。"
+    ],
+    "intentsHtml": [
+      "本が手で確かめた <code>Many</code> のモナド則を、Lean で証明しておく。和 <code>union</code> の結合律などの補題を使った帰納法。"
+    ]
+  },
+  {
+    "name": "reader-laws",
+    "frame": 1,
+    "source": "lean/Slides/Sec4_3/Laws.lean:56",
+    "steps": {},
+    "notes": [
+      "本の計算: Reader.bind (Reader.pure v) f → fun env => f ((Reader.pure v) env) env → … → f v。"
+    ],
+    "captions": [
+      "三つとも `rfl`、つまり定義を展開するだけで両辺が一致する。本の手計算と同じことを Lean が確かめている。"
+    ],
+    "intents": [
+      "`Reader` のモナド則。本は定義を一つずつ展開して確かめる。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "三つとも <code>rfl</code>、つまり定義を展開するだけで両辺が一致する。本の手計算と同じことを Lean が確かめている。"
+    ],
+    "intentsHtml": [
+      "<code>Reader</code> のモナド則。本は定義を一つずつ展開して確かめる。"
+    ]
+  },
+  {
+    "name": "theorem",
+    "frame": 1,
+    "source": "lean/Slides/Sec4_3/Trace.lean:82",
+    "steps": {},
+    "notes": [
+      "証明は構造的帰納法と simp だけ。結果側は evaluateM と同じ >>= の連鎖で組んでいる。"
+    ],
+    "captions": [
+      "どの Monad・どの式でも成り立つ。トレース側の定義が本のコードからずれれば、`lake build` が失敗する。"
+    ],
+    "intents": [
+      "トレースを作る `evaluateTraced` が、本の `evaluateM` と常に同じ結果を返すことを証明しておく。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "どの Monad・どの式でも成り立つ。トレース側の定義が本のコードからずれれば、<code>lake build</code> が失敗する。"
+    ],
+    "intentsHtml": [
+      "トレースを作る <code>evaluateTraced</code> が、本の <code>evaluateM</code> と常に同じ結果を返すことを証明しておく。"
+    ]
+  }
+]

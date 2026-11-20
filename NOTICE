@@ -7,12 +7,14 @@ This repository contains two kinds of material under two licenses.
 1. Material from the book: CC BY 4.0
 ------------------------------------
 
-The slide deck is based on
+The slide decks are based on
 
     Functional Programming in Lean
     by David Thrane Christiansen
     https://lean-lang.org/functional_programming_in_lean/
     source: https://github.com/leanprover/fp-lean
+    as of release tag release-2026-11
+    (commit 13db7a0a90f3fb9b7ef36ef0bd341b670967a49a; see book.json)
 
     Original version (c) 2023 Microsoft Corporation.
     Changes (c) 2023-2025 Lean FRO, LLC.
@@ -29,9 +31,8 @@ Changes made in this repository:
 
 The following is licensed under CC BY 4.0 (full text in LICENSE-CC-BY-4.0):
 
-- Lean code reproduced from the book (every Lean file under `lean/` except
-  those under `lean/Slides/`, and except the Lake configuration files).
-- The deck: `slides/slides.md`.
+- Lean code reproduced from the book: `lean/Book/`.
+- The decks: `slides/<chapter>-<section>.md` (e.g. `slides/4-3.md`).
 - Files generated from them: `slides/generated/`, and the built site.
 
 The material is provided as-is, without warranties; see Section 5 of the

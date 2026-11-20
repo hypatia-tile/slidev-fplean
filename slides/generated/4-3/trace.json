@@ -1,0 +1,331 @@
+[
+  {
+    "steps": [
+      {
+        "path": [],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "14",
+        "path": [
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          1,
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "45",
+        "path": [
+          1,
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1,
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          1,
+          1,
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "5",
+        "path": [
+          1,
+          1,
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1,
+          1,
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "9",
+        "path": [
+          1,
+          1,
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "45",
+        "path": [
+          1,
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "0",
+        "path": [
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "none",
+        "path": [],
+        "kind": "fail"
+      }
+    ],
+    "monad": "Option",
+    "id": "fourteenDivided-option",
+    "expr": {
+      "label": "/",
+      "children": [
+        {
+          "label": "14",
+          "children": []
+        },
+        {
+          "label": "-",
+          "children": [
+            {
+              "label": "45",
+              "children": []
+            },
+            {
+              "label": "*",
+              "children": [
+                {
+                  "label": "5",
+                  "children": []
+                },
+                {
+                  "label": "9",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "example": "fourteenDivided"
+  },
+  {
+    "steps": [
+      {
+        "path": [],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "14",
+        "path": [
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          1,
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "45",
+        "path": [
+          1,
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1,
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          1,
+          1,
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "5",
+        "path": [
+          1,
+          1,
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1,
+          1,
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "9",
+        "path": [
+          1,
+          1,
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "45",
+        "path": [
+          1,
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "0",
+        "path": [
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "error: Tried to divide 14 by zero",
+        "path": [],
+        "kind": "fail"
+      }
+    ],
+    "monad": "Except String",
+    "id": "fourteenDivided-except",
+    "expr": {
+      "label": "/",
+      "children": [
+        {
+          "label": "14",
+          "children": []
+        },
+        {
+          "label": "-",
+          "children": [
+            {
+              "label": "45",
+              "children": []
+            },
+            {
+              "label": "*",
+              "children": [
+                {
+                  "label": "5",
+                  "children": []
+                },
+                {
+                  "label": "9",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "example": "fourteenDivided"
+  },
+  {
+    "steps": [
+      {
+        "path": [],
+        "kind": "enter"
+      },
+      {
+        "path": [
+          0
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "2",
+        "path": [
+          0
+        ],
+        "kind": "return"
+      },
+      {
+        "path": [
+          1
+        ],
+        "kind": "enter"
+      },
+      {
+        "value": "3",
+        "path": [
+          1
+        ],
+        "kind": "return"
+      },
+      {
+        "value": "5",
+        "path": [],
+        "kind": "return"
+      }
+    ],
+    "monad": "Option",
+    "id": "twoPlusThree-option",
+    "expr": {
+      "label": "+",
+      "children": [
+        {
+          "label": "2",
+          "children": []
+        },
+        {
+          "label": "3",
+          "children": []
+        }
+      ]
+    },
+    "example": "twoPlusThree"
+  }
+]

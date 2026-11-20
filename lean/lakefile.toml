@@ -1,0 +1,20 @@
+name = "fplean"
+defaultTargets = ["Book", "Slides", "trace-4-3"]
+
+# Book code, one directory per section: Book/Sec<chapter>_<section>/ (CC BY 4.0, see NOTICE).
+# Modules are built one by one (globs), never through a root module that imports every
+# section: sections reuse names (the book redefines things), so they must not be imported
+# together unless a later section deliberately builds on an earlier one.
+[[lean_lib]]
+name = "Book"
+globs = ["Book.+"]
+
+# Slide-only helpers (traces, proofs of the book's laws), same layout: Slides/Sec<c>_<s>/.
+[[lean_lib]]
+name = "Slides"
+globs = ["Slides.+"]
+
+# One trace executable per deck that has trace animations; prints that deck's runs as JSON.
+[[lean_exe]]
+name = "trace-4-3"
+root = "Slides.Sec4_3.DumpTrace"

@@ -1,0 +1,8 @@
+.direnv/
+node_modules/
+lean/.lake/
+slides/dist/
+slides/.slidev/
+slides/generated.next/
+slides/generated.old/
+slides/*.md.next

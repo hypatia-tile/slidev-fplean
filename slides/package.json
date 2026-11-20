@@ -1,0 +1,19 @@
+{
+  "name": "fplean-slides",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open false",
+    "build": "slidev build",
+    "lean:import": "tsx ../scripts/import-lean.ts"
+  },
+  "dependencies": {
+    "@slidev/cli": "53.0.0",
+    "@slidev/theme-default": "0.25.0",
+    "katex": "0.18.10",
+    "vue": "3.5.45"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15"
+  }
+}
