@@ -1,0 +1,60 @@
+slidev-fplean
+=============
+
+This repository contains two kinds of material under two licenses.
+
+
+1. Material from the book: CC BY 4.0
+------------------------------------
+
+The slide deck is based on
+
+    Functional Programming in Lean
+    by David Thrane Christiansen
+    https://lean-lang.org/functional_programming_in_lean/
+    source: https://github.com/leanprover/fp-lean
+
+    Original version (c) 2023 Microsoft Corporation.
+    Changes (c) 2023-2025 Lean FRO, LLC.
+    Licensed under the Creative Commons Attribution 4.0 International
+    License (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+
+Changes made in this repository:
+
+- The book's prose is translated into Japanese and condensed into slides.
+- The book's examples are split into frames, and some frames elide lines
+  (shown as `...`). Identifiers and structure are kept as in the book.
+- Lean code that is not in the book is added: evaluation traces, proofs of
+  laws the book checks by hand, and helpers used only by the slides.
+
+The following is licensed under CC BY 4.0 (full text in LICENSE-CC-BY-4.0):
+
+- Lean code reproduced from the book (every Lean file under `lean/` except
+  those under `lean/Slides/`, and except the Lake configuration files).
+- The deck: `slides/slides.md`.
+- Files generated from them: `slides/generated/`, and the built site.
+
+The material is provided as-is, without warranties; see Section 5 of the
+license. This project is not affiliated with or endorsed by the author,
+Microsoft Corporation, or the Lean FRO.
+
+
+2. Everything else: MIT
+-----------------------
+
+Everything not listed in section 1 is (c) 2026 shinokun and licensed under
+the MIT License (full text in LICENSE). This includes the import scripts,
+the Vue components and other slide code, the Lean code under `lean/Slides/`,
+and the build and Nix configuration.
+
+
+Attribution in the deck
+-----------------------
+
+The deck itself must carry the attribution, because readers of the
+deployed site do not see this file:
+
+- the title slide has a short credit line naming the book, its author and
+  CC BY 4.0, with links;
+- the last slide has the full attribution in section 1, including the list
+  of changes.
