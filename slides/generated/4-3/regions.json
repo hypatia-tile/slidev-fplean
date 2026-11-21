@@ -285,30 +285,6 @@
     ]
   },
   {
-    "name": "eval-v5",
-    "frame": 1,
-    "source": "lean/Book/Sec4_3/Evaluate.lean:185",
-    "steps": {},
-    "notes": [
-      "割り算の関数を差し替えるだけで、同じ evaluateM が Option でも Except でも動く。",
-      "失敗しない式ではどちらも普通に値を返す。"
-    ],
-    "captions": [
-      "一つの評価器が、失敗を `none` でも理由つきのエラーでも表せる。失敗しない式では普通に値が返る。"
-    ],
-    "intents": [
-      "同じ `evaluateM` に、割り算の扱いだけを差し替えて渡す。"
-    ],
-    "messages": [],
-    "range": "",
-    "captionsHtml": [
-      "一つの評価器が、失敗を <code>none</code> でも理由つきのエラーでも表せる。失敗しない式では普通に値が返る。"
-    ],
-    "intentsHtml": [
-      "同じ <code>evaluateM</code> に、割り算の扱いだけを差し替えて渡す。"
-    ]
-  },
-  {
     "name": "expr",
     "frame": 1,
     "source": "lean/Book/Sec4_3/Expr.lean:5",
@@ -895,6 +871,30 @@
     ],
     "intentsHtml": [
       "利用者定義の演算子 <code>&quot;max&quot;</code> を含む式を、<code>applyPrimReader</code> を渡した <code>evaluateM</code> で評価する。"
+    ]
+  },
+  {
+    "name": "eval-v5",
+    "frame": 1,
+    "source": "lean/Slides/Sec4_3/Demo.lean:12",
+    "steps": {},
+    "notes": [
+      "割り算の関数を差し替えるだけで、同じ evaluateM が Option でも Except でも動く。",
+      "失敗しない式ではどちらも普通に値を返す。"
+    ],
+    "captions": [
+      "一つの評価器が、失敗を `none` でも理由つきのエラーでも表せる。失敗しない式では普通に値が返る。"
+    ],
+    "intents": [
+      "同じ `evaluateM` に、割り算の扱いだけを差し替えて渡す。"
+    ],
+    "messages": [],
+    "range": "",
+    "captionsHtml": [
+      "一つの評価器が、失敗を <code>none</code> でも理由つきのエラーでも表せる。失敗しない式では普通に値が返る。"
+    ],
+    "intentsHtml": [
+      "同じ <code>evaluateM</code> に、割り算の扱いだけを差し替えて渡す。"
     ]
   },
   {
