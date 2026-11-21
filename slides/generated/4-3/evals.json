@@ -18,24 +18,6 @@
     "output": "Except.error \"Tried to divide 14 by zero\""
   },
   {
-    "region": "eval-v5@1",
-    "source": "lean/Book/Sec4_3/Evaluate.lean:192",
-    "command": "#eval evaluateM applyDivOption fourteenDivided",
-    "output": "none"
-  },
-  {
-    "region": "eval-v5@1",
-    "source": "lean/Book/Sec4_3/Evaluate.lean:196",
-    "command": "#eval evaluateM applyDivExcept fourteenDivided",
-    "output": "Except.error \"Tried to divide 14 by zero\""
-  },
-  {
-    "region": "eval-v5@1",
-    "source": "lean/Book/Sec4_3/Evaluate.lean:200",
-    "command": "#eval evaluateM applyDivOption twoPlusThree",
-    "output": "some 5"
-  },
-  {
     "region": "eval-empty@1",
     "source": "lean/Book/Sec4_3/Further.lean:76",
     "command": "open Expr Prim in\n#eval evaluateM (m := Id) applyEmpty (prim plus (const 5) (const (-14)))",
@@ -70,5 +52,23 @@
     "source": "lean/Book/Sec4_3/Reader.lean:172",
     "command": "open Expr Prim in\n#eval evaluateM applyPrimReader\n        (prim (other \"max\") (prim plus (const 5) (const 4))\n          (prim times (const 3) (const 2)))\n        exampleEnv",
     "output": "9"
+  },
+  {
+    "region": "eval-v5@1",
+    "source": "lean/Slides/Sec4_3/Demo.lean:19",
+    "command": "#eval evaluateM applyDivOption fourteenDivided",
+    "output": "none"
+  },
+  {
+    "region": "eval-v5@1",
+    "source": "lean/Slides/Sec4_3/Demo.lean:23",
+    "command": "#eval evaluateM applyDivExcept fourteenDivided",
+    "output": "Except.error \"Tried to divide 14 by zero\""
+  },
+  {
+    "region": "eval-v5@1",
+    "source": "lean/Slides/Sec4_3/Demo.lean:27",
+    "command": "#eval evaluateM applyDivOption twoPlusThree",
+    "output": "some 5"
   }
 ]
